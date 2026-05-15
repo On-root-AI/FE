@@ -9,8 +9,8 @@
 |------|------|
 | 빌드 | Vite |
 | UI | React |
-| 스타일링 | Tailwind CSS |
-| 라우팅 | React Router v6 |
+| 스타일링 | CSS |
+| 라우팅 | React Router v7 |
 | 상태 관리 | Context API |
 | HTTP | Axios |
 | 코드 품질 | ESLint + Prettier |
@@ -96,7 +96,7 @@ chore: Prettier 설정 추가
  
 ### ESLint
  
-프로젝트 루트의 `.eslintrc` 파일을 기준으로 통일합니다.
+프로젝트 루트의 `eslint.config.js` 파일을 기준으로 통일합니다.
  
 ### VS Code 설정
  
