@@ -1,0 +1,23 @@
+.bubble {
+  max-width: 264px;
+  padding: 10px 14px;
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 22px;
+  word-break: keep-all;
+}
+
+.user {
+  align-self: flex-end;
+  border-radius: 20px 20px 2px 20px;
+  background: #dfe4c3;
+  text-align: center;
+}
+
+.assistant {
+  align-self: flex-start;
+  border: 2px solid #dfef88;
+  border-radius: 20px 20px 20px 2px;
+  background: var(--color-white);
+}
