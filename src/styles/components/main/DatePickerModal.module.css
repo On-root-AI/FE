@@ -1,0 +1,59 @@
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(45, 48, 35, 0.38);
+}
+
+.backdrop span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.panel {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 12px;
+  justify-items: center;
+}
+
+.actions {
+  width: 318px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  box-shadow: var(--shadow-soft);
+}
+
+.actions p {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.actions button {
+  min-width: 86px;
+  height: 34px;
+  border-radius: var(--radius-pill);
+  background: var(--color-selected);
+  color: var(--color-white);
+  font-size: 12px;
+  font-weight: 800;
+}
