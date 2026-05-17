@@ -1,4 +1,4 @@
-import Mascot from '../common/Mascot.jsx';
+import chatBottomMascot from '../../assets/figma/Chat_btm.png';
 import styles from '../../styles/components/chat/ChatSearchLoading.module.css';
 
 export default function ChatSearchLoading() {
@@ -9,7 +9,7 @@ export default function ChatSearchLoading() {
         <span />
         <span />
       </div>
-      <Mascot className={styles.mascot} variant="seed" size="sm" alt="탐색중" />
+      <img className={styles.mascot} src={chatBottomMascot} alt="탐색중" />
     </div>
   );
 }
