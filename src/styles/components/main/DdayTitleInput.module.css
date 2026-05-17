@@ -1,0 +1,76 @@
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 32;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 20px 38px;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(45, 48, 35, 0.22);
+}
+
+.backdrop span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.form {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 340px;
+  min-height: 58px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px 9px 14px;
+  border: 2px solid var(--color-text);
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+  box-shadow: 0 18px 40px rgba(42, 45, 31, 0.22);
+}
+
+.form p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.form input {
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.form input::placeholder {
+  color: var(--color-soft-muted);
+}
+
+.form button {
+  min-width: 54px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--color-selected);
+  color: var(--color-white);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.form button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
