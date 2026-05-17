@@ -5,9 +5,10 @@ import ChatInputBar from '../components/chat/ChatInputBar.jsx';
 import ChatLanding from '../components/chat/ChatLanding.jsx';
 import ChatLoadingOverlay from '../components/chat/ChatLoadingOverlay.jsx';
 import ChatSearchLoading from '../components/chat/ChatSearchLoading.jsx';
-import Mascot from '../components/common/Mascot.jsx';
 import MobileScreenLayout from '../components/layout/MobileScreenLayout.jsx';
 import StudyPlanCard from '../components/chat/StudyPlanCard.jsx';
+import chatBottomMascot from '../assets/figma/Chat_btm.png';
+import chatSideMascot from '../assets/figma/Chat_side.png';
 import { sendChatMessage } from '../apis/chat.js';
 import styles from '../styles/pages/ChatPage.module.css';
 
@@ -16,6 +17,7 @@ export default function ChatPage() {
   const [input, setInput] = useState('');
   const [isInitializing, setIsInitializing] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPlanExpanded, setIsPlanExpanded] = useState(false);
   const messageId = useRef(0);
 
   useEffect(() => {
@@ -46,6 +48,7 @@ export default function ChatPage() {
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
+    setIsPlanExpanded(false);
 
     try {
       const response = await sendChatMessage(text);
@@ -86,6 +89,7 @@ export default function ChatPage() {
         className={[
           styles.messages,
           hasStudyPlan ? styles.withPlan : '',
+          isPlanExpanded ? styles.expandedPlan : '',
           isEmpty ? styles.empty : '',
         ].join(' ')}
       >
@@ -97,13 +101,22 @@ export default function ChatPage() {
                   title={message.title}
                   days={message.studyPlan}
                   maxDays={3}
+                  onExpandedChange={setIsPlanExpanded}
                 />
-                <Mascot
-                  className={styles.resultMascot}
-                  variant="sprout"
-                  size="lg"
-                  alt=""
-                />
+                {!isPlanExpanded ? (
+                  <>
+                    <img
+                      className={styles.resultMascot}
+                      src={chatSideMascot}
+                      alt=""
+                    />
+                    <img
+                      className={styles.bottomMascot}
+                      src={chatBottomMascot}
+                      alt=""
+                    />
+                  </>
+                ) : null}
               </div>
             );
           }
@@ -118,13 +131,17 @@ export default function ChatPage() {
         {isLoading ? <ChatSearchLoading /> : null}
       </section>
 
-      <div className={styles.bottomFade} aria-hidden="true" />
-      <ChatInputBar
-        disabled={isLoading || isInitializing}
-        value={input}
-        onChange={setInput}
-        onSubmit={submitMessage}
-      />
+      {!isPlanExpanded ? (
+        <>
+          <div className={styles.bottomFade} aria-hidden="true" />
+          <ChatInputBar
+            disabled={isLoading || isInitializing}
+            value={input}
+            onChange={setInput}
+            onSubmit={submitMessage}
+          />
+        </>
+      ) : null}
       {isInitializing ? <ChatLoadingOverlay /> : null}
     </MobileScreenLayout>
   );

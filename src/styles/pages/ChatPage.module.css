@@ -110,6 +110,11 @@
   gap: 10px;
 }
 
+.expandedPlan {
+  height: 762px;
+  padding: 42px 20px 28px;
+}
+
 .empty {
   pointer-events: none;
 }
@@ -123,7 +128,23 @@
 .resultMascot {
   position: absolute;
   right: -66px;
-  bottom: -12px;
+  bottom: -14px;
+  width: 86px;
+  height: auto;
+  filter: drop-shadow(0 0.632px 6.316px rgba(0, 0, 0, 0.15));
+}
+
+.bottomMascot {
+  position: absolute;
+  left: -2px;
+  bottom: -34px;
+  width: 29px;
+  height: auto;
+  filter: drop-shadow(0 0.36px 3.595px rgba(0, 0, 0, 0.15));
+}
+
+.expandedPlan .resultGroup {
+  margin-top: 0;
 }
 
 .bottomFade {

@@ -78,6 +78,10 @@
   line-height: 1;
 }
 
+.chat .backButton {
+  transform: translateY(-27px);
+}
+
 .rightSlot {
   min-width: 46px;
   display: flex;
