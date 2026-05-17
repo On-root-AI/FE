@@ -1,0 +1,24 @@
+.button {
+  position: absolute;
+  right: 30px;
+  bottom: 43px;
+  z-index: 20;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  background: transparent;
+}
+
+.button span:last-child {
+  min-width: 71px;
+  height: 33px;
+  display: grid;
+  place-items: center;
+  margin-top: -10px;
+  border-radius: var(--radius-lg);
+  background: var(--color-main);
+  color: var(--color-background);
+  font-size: 20px;
+  font-weight: 900;
+  box-shadow: 0 8px 14px rgba(119, 139, 62, 0.34);
+}
