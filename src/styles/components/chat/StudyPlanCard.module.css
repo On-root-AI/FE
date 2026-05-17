@@ -1,0 +1,86 @@
+.card {
+  width: 264px;
+  padding: 10px 22px 24px;
+  border: 2px solid #dfef88;
+  border-radius: 20px 20px 20px 2px;
+  background: var(--color-white);
+}
+
+.card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.card h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.card header button {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 18px;
+}
+
+.days {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.day {
+  min-height: 82px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--color-card-green);
+}
+
+.day strong {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.day ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.day li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.day li span {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  border: 1px solid var(--color-selected);
+  border-radius: 50%;
+  background: var(--color-white);
+}
+
+.more {
+  margin: -2px 0 0;
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  line-height: 16px;
+  text-align: center;
+}
