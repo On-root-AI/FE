@@ -1,0 +1,51 @@
+.wrap {
+  align-self: flex-start;
+  display: grid;
+  grid-template-columns: auto;
+  gap: 8px;
+  justify-items: start;
+}
+
+.bubble {
+  width: 94px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 2px solid var(--color-card-green);
+  border-radius: 20px 20px 20px 2px;
+  background: var(--color-white);
+}
+
+.bubble span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-text);
+  animation: thinking 0.9s ease-in-out infinite;
+}
+
+.bubble span:nth-child(2) {
+  animation-delay: 0.12s;
+}
+
+.bubble span:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+.mascot {
+  margin-left: 0;
+}
+
+@keyframes thinking {
+  0%,
+  80%,
+  100% {
+    opacity: 0.35;
+  }
+
+  40% {
+    opacity: 1;
+  }
+}
