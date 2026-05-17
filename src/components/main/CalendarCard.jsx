@@ -12,6 +12,7 @@ export default function CalendarCard({
   onPreviousMonth,
   onNextMonth,
   onSelectDate,
+  onToggleExpand,
   size = 'compact',
 }) {
   const cells = getCalendarCells(displayDate);
@@ -53,11 +54,16 @@ export default function CalendarCard({
           </button>
         ))}
       </div>
-      {size === 'compact' ? (
+      {size === 'compact' || size === 'expanded' ? (
         <button
-          className={styles.expandButton}
+          className={[
+            styles.expandButton,
+            size === 'expanded' ? styles.collapseButton : '',
+          ].join(' ')}
           type="button"
-          aria-label="달력 펼치기"
+          aria-label={size === 'expanded' ? '달력 접기' : '달력 펼치기'}
+          aria-expanded={size === 'expanded'}
+          onClick={onToggleExpand}
         />
       ) : null}
     </section>

@@ -19,6 +19,7 @@ export default function MainPage() {
   const [dDayItems, setDdayItems] = useState([]);
   const [draftDate, setDraftDate] = useState(today);
   const [dDayStep, setDdayStep] = useState('idle');
+  const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
 
   const startDdayDraft = () => {
     setDraftDate(today);
@@ -84,6 +85,10 @@ export default function MainPage() {
           selectedDate={today}
           onPreviousMonth={() => moveCalendarMonth(-1)}
           onNextMonth={() => moveCalendarMonth(1)}
+          onToggleExpand={() =>
+            setIsCalendarExpanded((isExpanded) => !isExpanded)
+          }
+          size={isCalendarExpanded ? 'expanded' : 'compact'}
         />
         <ActionCard tone="strong">카테고리 추가하기</ActionCard>
       </div>

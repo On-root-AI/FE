@@ -13,6 +13,11 @@
   height: 154px;
 }
 
+.expanded {
+  min-height: 310px;
+  padding-bottom: 18px;
+}
+
 .large {
   width: 318px;
   min-height: 330px;
@@ -89,6 +94,11 @@
   grid-template-rows: repeat(2, 30px);
 }
 
+.expanded .grid {
+  row-gap: 8px;
+  margin-top: 12px;
+}
+
 .grid button {
   width: 30px;
   height: 30px;
@@ -121,7 +131,8 @@
   display: none;
 }
 
-.compact .expandButton {
+.compact .expandButton,
+.expanded .expandButton {
   position: absolute;
   left: 50%;
   bottom: 7px;
@@ -132,7 +143,8 @@
   transform: translateX(-50%);
 }
 
-.compact .expandButton::before {
+.compact .expandButton::before,
+.expanded .expandButton::before {
   content: '';
   position: absolute;
   left: 50%;
@@ -142,6 +154,11 @@
   border-right: 1.5px solid var(--color-selected);
   border-bottom: 1.5px solid var(--color-selected);
   transform: translateX(-50%) rotate(45deg);
+}
+
+.expanded .collapseButton::before {
+  top: 5px;
+  transform: translateX(-50%) rotate(225deg);
 }
 
 .large .grid .selected {
