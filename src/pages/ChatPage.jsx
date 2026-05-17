@@ -93,7 +93,11 @@ export default function ChatPage() {
           if (message.studyPlan?.length) {
             return (
               <div className={styles.resultGroup} key={message.id}>
-                <StudyPlanCard days={message.studyPlan} maxDays={3} />
+                <StudyPlanCard
+                  title={message.title}
+                  days={message.studyPlan}
+                  maxDays={3}
+                />
                 <Mascot
                   className={styles.resultMascot}
                   variant="sprout"
