@@ -1,0 +1,26 @@
+.mascot {
+  display: block;
+  flex: none;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px rgba(123, 135, 84, 0.22));
+}
+
+.sm {
+  width: 40px;
+  height: 48px;
+}
+
+.md {
+  width: 52px;
+  height: 63px;
+}
+
+.lg {
+  width: 70px;
+  height: 86px;
+}
+
+.hero {
+  width: 115px;
+  height: 165px;
+}
