@@ -3,6 +3,28 @@
 > onRoot 프로젝트의 프론트엔드 레포지토리입니다.
 
 <br/>
+🚀 MVP 실행
+
+```bash
+npm install
+npm run dev
+```
+
+`.env` 예시는 `.env.example`을 참고합니다.
+
+```bash
+VITE_API_BASE_URL=
+VITE_CHAT_API_URL=/api/ai/generate
+```
+
+- `/`: onroot 스플래시 화면
+- `/splash`: onroot 스플래시 화면
+- `/main`: onroot 홈 mock 화면
+- `/chat`: onruAI 챗봇 화면
+- 현재 MVP는 AI 챗봇 API만 실제 연동하고, D-Day/캘린더/루트 추가는 mock UI로 제공합니다.
+- 챗봇 API는 일반 JSON 응답을 기준으로 하며, UI에서는 `answer`와 선택적 `studyPlan`을 사용합니다.
+
+<br/>
 🛠 Tech Stack
  
 | 역할 | 기술 |
@@ -23,10 +45,16 @@ src/
 ├── apis/          # axios 인스턴스 및 API 호출 함수
 ├── assets/        # 이미지, 폰트 등 정적 파일
 ├── components/    # 재사용 UI 컴포넌트
+│   ├── common/    # 여러 페이지에서 공유되는 공통 컴포넌트
+│   ├── layout/    # 화면 레이아웃 컴포넌트
+│   ├── main/      # 메인 화면 전용 컴포넌트
+│   └── chat/      # 채팅 화면 전용 컴포넌트
 ├── hooks/         # 커스텀 훅
 ├── pages/         # 라우트별 페이지 컴포넌트
 ├── store/         # Context 전역 상태
-├── styles/        # 전역 스타일 (Tailwind base 등)
+├── styles/        # 전역 스타일, 디자인 토큰, CSS Module
+│   ├── components/# 컴포넌트별 CSS Module
+│   └── pages/     # 페이지별 CSS Module
 └── utils/         # 순수 유틸 함수
 ```
  
