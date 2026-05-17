@@ -1,0 +1,30 @@
+.viewport {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  background:
+    radial-gradient(
+      circle at 20% 0%,
+      rgba(223, 239, 136, 0.35),
+      transparent 32%
+    ),
+    #e7eadb;
+}
+
+.screen {
+  position: relative;
+  width: min(100vw, 390px);
+  min-height: 100vh;
+  overflow: hidden;
+  color: var(--color-text);
+  box-shadow: 0 24px 80px rgba(46, 54, 31, 0.2);
+}
+
+.default {
+  background: var(--color-background);
+}
+
+.chat {
+  background: var(--color-chat-background);
+}
