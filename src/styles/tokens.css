@@ -1,0 +1,17 @@
+:root {
+  --color-background: #f6f7ef;
+  --color-chat-background: #faffe1;
+  --color-main: #8b9f5b;
+  --color-selected: #778b3e;
+  --color-light-main: #e6e7d9;
+  --color-card-green: #dfef88;
+  --color-text: #44473c;
+  --color-muted: #939584;
+  --color-soft-muted: #bbbdad;
+  --color-white: #fefffb;
+  --color-line: rgba(119, 139, 62, 0.28);
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-pill: 1000px;
+  --shadow-soft: 0 10px 24px rgba(123, 135, 84, 0.18);
+}
