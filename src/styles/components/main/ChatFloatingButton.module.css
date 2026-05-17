@@ -1,8 +1,7 @@
 .button {
-  position: absolute;
-  right: 30px;
-  bottom: 43px;
-  z-index: 20;
+  justify-self: end;
+  margin-top: 8px;
+  margin-right: 18px;
   display: grid;
   justify-items: center;
   gap: 2px;

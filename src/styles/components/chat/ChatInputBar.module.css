@@ -2,7 +2,7 @@
   position: absolute;
   left: 20px;
   right: 20px;
-  bottom: 24px;
+  bottom: calc(24px + var(--keyboard-offset, 0px));
   z-index: 25;
   height: 40px;
   display: flex;

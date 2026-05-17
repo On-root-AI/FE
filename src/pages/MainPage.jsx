@@ -63,7 +63,7 @@ export default function MainPage() {
     activeDday && dDayStep === 'idle' ? startDdayDraft : openDatePicker;
 
   return (
-    <MobileScreenLayout>
+    <MobileScreenLayout scrollable>
       <AppHeader variant="home" subtitle={formatKoreanFullDate(today)} />
       <DateStrip selectedDate={today} />
 
@@ -91,10 +91,10 @@ export default function MainPage() {
           size={isCalendarExpanded ? 'expanded' : 'compact'}
         />
         <ActionCard tone="strong">카테고리 추가하기</ActionCard>
+        <ChatFloatingButton />
       </div>
 
       <div className={styles.bottomGlow} aria-hidden="true" />
-      <ChatFloatingButton />
 
       {dDayStep === 'date' ? (
         <DatePickerModal
