@@ -3,12 +3,15 @@
 > onRoot 프로젝트의 프론트엔드 레포지토리입니다.
 
 <br/>
-🚀 MVP 실행
+MVP 실행
 
 ```bash
 npm install
+npm install react-router-dom
 npm run dev
 ```
+
+주요 의존성은 `package.json` 기준으로 설치됩니다. API 통신에는 `axios`를 사용합니다.
 
 `.env` 예시는 `.env.example`을 참고합니다.
 
@@ -18,7 +21,6 @@ VITE_CHAT_API_URL=/api/ai/generate
 ```
 
 - `/`: onroot 스플래시 화면
-- `/splash`: onroot 스플래시 화면
 - `/main`: onroot 홈 mock 화면
 - `/chat`: onruAI 챗봇 화면
 - 현재 MVP는 AI 챗봇 API만 실제 연동하고, D-Day/캘린더/루트 추가는 mock UI로 제공합니다.
