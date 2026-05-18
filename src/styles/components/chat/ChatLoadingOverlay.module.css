@@ -1,0 +1,21 @@
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: grid;
+  place-items: center;
+  background: rgba(45, 51, 39, 0.62);
+}
+
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-18px);
+}
+
+.loadingMascot {
+  width: 148px;
+  height: auto;
+  filter: drop-shadow(0 16px 42px rgba(40, 46, 32, 0.28));
+}

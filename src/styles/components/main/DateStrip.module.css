@@ -1,0 +1,47 @@
+.strip {
+  position: absolute;
+  z-index: 20;
+  left: 30px;
+  top: 122px;
+  width: 330px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.day {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  background: transparent;
+  color: #aaaba1;
+  padding: 0;
+}
+
+.day span {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.day strong {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(230, 231, 217, 0.78);
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.selected span {
+  color: var(--color-selected);
+}
+
+.selected strong {
+  background: var(--color-main);
+  color: var(--color-background);
+  font-weight: 800;
+  box-shadow: 0 8px 16px rgba(119, 139, 62, 0.28);
+}

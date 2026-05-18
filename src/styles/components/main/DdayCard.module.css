@@ -1,0 +1,87 @@
+.card {
+  width: 330px;
+  min-height: 94px;
+  display: grid;
+  align-content: start;
+  border-radius: var(--radius-lg);
+  background: var(--color-card-green);
+  box-shadow: var(--shadow-soft);
+  overflow: hidden;
+}
+
+.summary {
+  min-height: 46px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 17px 8px;
+  background: transparent;
+  color: var(--color-text);
+  text-align: left;
+}
+
+.summary strong,
+.summary span,
+.summary time {
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.summary span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.summary time {
+  color: var(--color-muted);
+}
+
+.addRow {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 17px;
+  border-top: 1px solid rgba(119, 139, 62, 0.16);
+  background: transparent;
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.addRow span {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--color-white);
+  color: var(--color-main);
+  font-size: 0;
+  line-height: 0;
+}
+
+.addRow span::before,
+.addRow span::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 999px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+
+.addRow span::before {
+  width: 9px;
+  height: 3px;
+}
+
+.addRow span::after {
+  width: 3px;
+  height: 9px;
+}

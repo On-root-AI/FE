@@ -1,0 +1,174 @@
+.card {
+  width: 264px;
+  padding: 10px 22px 14px;
+  border: 2px solid #dfef88;
+  border-radius: 20px 20px 20px 2px;
+  background: var(--color-white);
+}
+
+.expanded {
+  width: 350px;
+  min-height: 670px;
+  padding: 14px 22px 22px;
+  border-radius: 20px;
+}
+
+.card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.card h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.expandButton {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  background: transparent;
+}
+
+.expandButton img {
+  display: block;
+  max-width: 14px;
+  max-height: 14px;
+}
+
+.days {
+  display: grid;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.expanded .days {
+  gap: 5px;
+  margin-top: 12px;
+}
+
+.day {
+  min-height: 82px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: #dfef88;
+}
+
+.expanded .day {
+  width: 302px;
+}
+
+.dayHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+.dayHeader strong {
+  min-width: 0;
+  flex: 1;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.editDay {
+  width: 24px;
+  height: 18px;
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.dateInput,
+.taskInput {
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.dateInput {
+  min-width: 0;
+  flex: 1;
+  padding: 3px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+}
+
+.day ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.day li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.checkButton {
+  width: 14px;
+  height: 14px;
+  margin-top: 1px;
+  padding: 0;
+  flex: 0 0 auto;
+  border: 1px solid var(--color-selected);
+  border-radius: 50%;
+  background: var(--color-white);
+}
+
+.checkButton[aria-pressed='true'] {
+  background:
+    radial-gradient(circle, var(--color-selected) 0 42%, transparent 48%),
+    var(--color-white);
+}
+
+.taskText {
+  min-width: 0;
+  flex: 1;
+}
+
+.taskInput {
+  min-height: 24px;
+  flex: 1;
+  resize: vertical;
+  padding: 4px 6px;
+  overflow: hidden;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.doneTask .taskText,
+.doneTask .taskInput {
+  color: rgba(59, 59, 59, 0.58);
+  text-decoration: line-through;
+}
+
+.editDay:focus-visible,
+.checkButton:focus-visible,
+.dateInput:focus-visible,
+.taskInput:focus-visible,
+.expandButton:focus-visible {
+  outline: 2px solid var(--color-selected);
+  outline-offset: 2px;
+}
