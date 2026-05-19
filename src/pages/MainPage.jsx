@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ActionCard from '../components/common/ActionCard.jsx';
 import AppHeader from '../components/common/AppHeader.jsx';
 import CalendarCard from '../components/main/CalendarCard.jsx';
@@ -10,8 +11,11 @@ import DdayTitleInput from '../components/main/DdayTitleInput.jsx';
 import MobileScreenLayout from '../components/layout/MobileScreenLayout.jsx';
 import styles from '../styles/pages/MainPage.module.css';
 import { formatKoreanFullDate } from '../utils/date.js';
+import mascotImg from '../assets/figma/mascot-small.png';
 
 export default function MainPage() {
+  const navigate = useNavigate();
+
   const today = useMemo(() => new Date(), []);
   const [calendarMonth, setCalendarMonth] = useState(
     () => new Date(today.getFullYear(), today.getMonth(), 1)
@@ -64,7 +68,24 @@ export default function MainPage() {
 
   return (
     <MobileScreenLayout scrollable>
-      <AppHeader variant="home" subtitle={formatKoreanFullDate(today)} />
+      <AppHeader 
+        variant="home" 
+        subtitle={formatKoreanFullDate(today)} 
+        rightSlot={
+          <img 
+            src={mascotImg} 
+            alt="온루 키우기" 
+            style={{ 
+              width: '32px', 
+              height: '32px', 
+              cursor: 'pointer',
+              position: 'relative',
+              zIndex: 10
+            }}
+            onClick={() => navigate('/growth')} 
+          />
+        }
+      />
       <DateStrip selectedDate={today} />
 
       <div className={styles.content}>
