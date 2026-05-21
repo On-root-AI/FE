@@ -1,55 +1,189 @@
 .card {
+  position: relative;
   width: 330px;
-  min-height: 94px;
+  min-height: 103px;
   display: grid;
   align-content: start;
   border-radius: var(--radius-lg);
-  background: var(--color-card-green);
-  box-shadow: var(--shadow-soft);
+  background: #f6d87b;
   overflow: hidden;
 }
 
 .summary {
-  min-height: 46px;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 8px;
-  padding: 14px 17px 8px;
+  position: relative;
+  min-height: 50px;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  padding: 0 17px;
   background: transparent;
   color: var(--color-text);
   text-align: left;
 }
 
-.summary strong,
-.summary span,
-.summary time {
+.summaryContent {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 10px;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.summaryContent strong {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.summaryContent span,
+.summaryContent time,
+.separator {
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 500;
   line-height: 1.2;
 }
 
-.summary span {
+.summaryContent span {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.summary time {
-  color: var(--color-muted);
+.summaryContent time {
+  color: #7d806c;
+  font-weight: 400;
+}
+
+.separator {
+  color: var(--color-text);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.menuButton {
+  width: 18px;
+  height: 50px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  margin-left: 10px;
+  background: transparent;
+  color: var(--color-text);
+}
+
+.menuButton span {
+  position: relative;
+  width: 13px;
+  height: 3px;
+  background:
+    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) left
+      center / 3px 3px no-repeat,
+    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) center /
+      3px 3px no-repeat,
+    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) right
+      center / 3px 3px no-repeat;
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  top: 33px;
+  z-index: 3;
+  width: 60px;
+  height: 50px;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  border-radius: 15px 3px 15px 15px;
+  background: var(--color-white);
+  box-shadow: 0 8px 18px rgba(66, 72, 43, 0.16);
+  overflow: hidden;
+}
+
+.menu button {
+  display: grid;
+  grid-template-columns: 1fr 12px;
+  align-items: center;
+  column-gap: 3px;
+  padding: 0 10px 0 13px;
+  background: transparent;
+  color: #653f28;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.menu button + button {
+  border-top: 1px solid rgba(101, 63, 40, 0.16);
+}
+
+.editIcon,
+.deleteIcon {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  color: #f2aa54;
+}
+
+.editIcon::before {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 5px;
+  width: 9px;
+  height: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  transform: rotate(-35deg);
+}
+
+.editIcon::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 2px;
+  width: 3px;
+  height: 3px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+.deleteIcon::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 4px;
+  width: 7px;
+  height: 6px;
+  border-radius: 1px 1px 2px 2px;
+  background: currentColor;
+}
+
+.deleteIcon::after {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 2px;
+  width: 9px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
 }
 
 .addRow {
-  height: 48px;
+  height: 53px;
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 0 17px;
-  border-top: 1px solid rgba(119, 139, 62, 0.16);
-  background: transparent;
+  border-radius: var(--radius-lg);
+  background: rgba(231, 228, 217, 0.5);
   color: var(--color-text);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   text-align: left;
 }
 

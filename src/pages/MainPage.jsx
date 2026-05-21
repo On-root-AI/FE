@@ -19,14 +19,19 @@ export default function MainPage() {
   const [dDayItems, setDdayItems] = useState([]);
   const [draftDate, setDraftDate] = useState(today);
   const [dDayStep, setDdayStep] = useState('idle');
+  const [editingDdayId, setEditingDdayId] = useState(null);
+  const [openDdayMenuId, setOpenDdayMenuId] = useState(null);
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
 
   const startDdayDraft = () => {
+    setOpenDdayMenuId(null);
+    setEditingDdayId(null);
     setDraftDate(today);
-    setDdayStep('draft');
+    setDdayStep('date');
   };
 
   const openDatePicker = () => {
+    setOpenDdayMenuId(null);
     setDdayStep('date');
   };
 
@@ -35,6 +40,17 @@ export default function MainPage() {
   };
 
   const completeDday = (title) => {
+    if (editingDdayId) {
+      setDdayItems((items) =>
+        items.map((item) =>
+          item.id === editingDdayId ? { ...item, title } : item
+        )
+      );
+      setEditingDdayId(null);
+      setDdayStep('idle');
+      return;
+    }
+
     setDdayItems((items) => [
       {
         id: crypto.randomUUID(),
@@ -47,7 +63,31 @@ export default function MainPage() {
   };
 
   const closeDdayFlow = () => {
+    setEditingDdayId(null);
     setDdayStep('idle');
+  };
+
+  const toggleDdayMenu = (id) => {
+    setOpenDdayMenuId((currentId) => (currentId === id ? null : id));
+  };
+
+  const editDday = (id) => {
+    const item = dDayItems.find((dDay) => dDay.id === id);
+    if (!item) return;
+
+    setOpenDdayMenuId(null);
+    setEditingDdayId(id);
+    setDraftDate(item.date);
+    setDdayStep('title');
+  };
+
+  const deleteDday = (id) => {
+    setDdayItems((items) => items.filter((item) => item.id !== id));
+    setOpenDdayMenuId(null);
+    if (editingDdayId === id) {
+      setEditingDdayId(null);
+      setDdayStep('idle');
+    }
   };
 
   const moveCalendarMonth = (amount) => {
@@ -58,7 +98,6 @@ export default function MainPage() {
   };
 
   const activeDday = dDayItems[0];
-  const isDdayDrafting = dDayStep !== 'idle';
   const handleDdayCardAdd =
     activeDday && dDayStep === 'idle' ? startDdayDraft : openDatePicker;
 
@@ -68,13 +107,17 @@ export default function MainPage() {
       <DateStrip selectedDate={today} />
 
       <div className={styles.content}>
-        {activeDday || isDdayDrafting ? (
+        {activeDday ? (
           <DdayCard
-            item={dDayStep === 'idle' ? activeDday : null}
+            item={activeDday}
             draftDate={draftDate}
             today={today}
+            isMenuOpen={openDdayMenuId === activeDday.id}
             onAdd={handleDdayCardAdd}
             onSelectDate={openDatePicker}
+            onToggleMenu={() => toggleDdayMenu(activeDday.id)}
+            onEdit={() => editDday(activeDday.id)}
+            onDelete={() => deleteDday(activeDday.id)}
           />
         ) : (
           <ActionCard onClick={startDdayDraft}>D-Day 추가하기</ActionCard>
@@ -107,6 +150,9 @@ export default function MainPage() {
       {dDayStep === 'title' ? (
         <DdayTitleInput
           selectedDate={draftDate}
+          initialTitle={
+            dDayItems.find((item) => item.id === editingDdayId)?.title || ''
+          }
           onSubmit={completeDday}
           onClose={closeDdayFlow}
         />
