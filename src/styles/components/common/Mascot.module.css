@@ -5,6 +5,7 @@
   filter: drop-shadow(0 8px 18px rgba(123, 135, 84, 0.22));
 }
 
+/* [수정] 피그마 기준 sm 크기 유지, 마스코트 비율에 맞게 조정 */
 .sm {
   width: 40px;
   height: 48px;

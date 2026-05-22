@@ -18,6 +18,7 @@ export default function Mascot({
   variant = 'small',
   className = '',
   alt = '',
+  onClick,
 }) {
   return (
     <img
@@ -25,6 +26,9 @@ export default function Mascot({
       src={mascotByVariant[variant]}
       alt={alt}
       aria-hidden={alt ? undefined : 'true'}
+      // [수정] onClick 추가
+      onClick={onClick}
+      style={onClick ? { cursor: 'pointer' } : {}}
     />
   );
 }

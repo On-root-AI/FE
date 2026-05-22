@@ -6,7 +6,7 @@
   align-content: start;
   border-radius: var(--radius-lg);
   background: #f6d87b;
-  overflow: hidden;
+  overflow: visible; 
 }
 
 .summaryList {
@@ -44,7 +44,7 @@
 
 .summaryContent strong {
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -89,97 +89,52 @@
   width: 13px;
   height: 3px;
   background:
-    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) left
-      center / 3px 3px no-repeat,
-    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) center /
-      3px 3px no-repeat,
-    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) right
-      center / 3px 3px no-repeat;
+    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) left center / 3px 3px no-repeat,
+    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) center / 3px 3px no-repeat,
+    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) right center / 3px 3px no-repeat;
 }
 
 .menu {
   position: absolute;
-  right: 0;
-  top: 33px;
-  z-index: 3;
-  width: 60px;
-  height: 50px;
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  border-radius: 15px 3px 15px 15px;
+  right: 10px; 
+  top: 36px;
+  z-index: 100; 
+  width: 90px;
   background: var(--color-white);
-  box-shadow: 0 8px 18px rgba(66, 72, 43, 0.16);
-  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
 }
 
 .menu button {
-  display: grid;
-  grid-template-columns: 1fr 12px;
+  display: flex;
   align-items: center;
-  column-gap: 3px;
-  padding: 0 10px 0 13px;
+  justify-content: space-between;
+  padding: 8px 14px;
   background: transparent;
-  color: #653f28;
-  font-size: 12px;
-  font-weight: 700;
+  border: none;
+  color: #4A4D41;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.menu button + button {
-  border-top: 1px solid rgba(101, 63, 40, 0.16);
+.menu button:not(:last-child) {
+  border-bottom: 1px solid rgba(119, 139, 62, 0.2);
 }
 
-.editIcon,
-.deleteIcon {
-  position: relative;
-  width: 10px;
-  height: 10px;
-  color: #f2aa54;
+.menu button:hover {
+  background-color: #f7f8f3;
 }
 
-.editIcon::before {
-  content: '';
-  position: absolute;
-  left: 1px;
-  top: 5px;
-  width: 9px;
-  height: 3px;
-  border-radius: 2px;
-  background: currentColor;
-  transform: rotate(-35deg);
+.divider {
+  height: 1px;
+  background-color: #E4E5DC;
+  margin: 4px 10px;
 }
-
-.editIcon::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 2px;
-  width: 3px;
-  height: 3px;
-  border-radius: 1px;
-  background: currentColor;
-}
-
-.deleteIcon::before {
-  content: '';
-  position: absolute;
-  left: 2px;
-  top: 4px;
-  width: 7px;
-  height: 6px;
-  border-radius: 1px 1px 2px 2px;
-  background: currentColor;
-}
-
-.deleteIcon::after {
-  content: '';
-  position: absolute;
-  left: 1px;
-  top: 2px;
-  width: 9px;
-  height: 2px;
-  border-radius: 999px;
-  background: currentColor;
-}
+/* ------------------------------------- */
 
 .addRow {
   height: 53px;
@@ -218,12 +173,5 @@
   transform: translate(-50%, -50%);
 }
 
-.addRow span::before {
-  width: 9px;
-  height: 3px;
-}
-
-.addRow span::after {
-  width: 3px;
-  height: 9px;
-}
+.addRow span::before { width: 9px; height: 3px; }
+.addRow span::after { width: 3px; height: 9px; }
