@@ -1,177 +1,49 @@
-.card {
-  position: relative;
-  width: 330px;
-  padding: 10px 0 12px;
-  border: 1px solid var(--color-selected);
-  border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, #fcfdf6 0%, #f3f9e4 100%);
-  box-shadow: 0 8px 16px rgba(119, 139, 62, 0.12);
-  overflow: hidden;
+/* --- 기본 레이아웃 (건드리지 마) --- */
+.card { position: relative; width: 330px; padding: 10px 0 12px; border: 1px solid var(--color-selected); border-radius: var(--radius-lg); background: linear-gradient(180deg, #fcfdf6 0%, #f3f9e4 100%); box-shadow: 0 8px 16px rgba(119, 139, 62, 0.12); overflow: hidden; }
+.compact { height: 154px; }
+.expanded { min-height: 310px; padding-bottom: 18px; }
+.large { width: 318px; min-height: 330px; padding: 16px 18px 20px; background: var(--color-white); box-shadow: 0 18px 44px rgba(58, 66, 38, 0.24); }
+
+.header { display: flex; align-items: center; justify-content: space-between; margin: 0 16px; border-bottom: 1px solid rgba(119, 139, 62, 0.24); padding: 0 0 8px; }
+.header button { width: 24px; height: 22px; display: grid; place-items: center; background: transparent; color: var(--color-text); font-size: 0; font-weight: 900; line-height: 1; }
+.header h2 { margin: 0; color: var(--color-text); font-size: 18px; line-height: 20px; }
+
+.weekdays, .grid { display: grid; grid-template-columns: repeat(7, 47px); align-items: center; justify-content: center; text-align: center; }
+.weekdays { margin-top: 8px; color: var(--color-muted); font-size: 12px; font-weight: 700; }
+.grid { margin-top: 8px; color: var(--color-muted); row-gap: 2px; }
+
+.grid button { 
+  width: 30px; height: 30px; justify-self: center; position: relative; 
+  border-radius: 8px; background: transparent; color: inherit; font-size: 18px; font-weight: 500; border: none; cursor: pointer; 
+}
+.outside { visibility: hidden; }
+
+/* --- [중요] 스타일 우선순위 관리 (아래로 갈수록 더 강력함) --- */
+
+/* 1. 기본 스타일 (가장 약함) */
+.grid button { background: transparent; color: inherit; }
+
+/* 2. D-Day만 있는 경우 (연한 초록) */
+.hasDday {
+  background-color: #C8D9A0 !important;
+  color: #333333 !important;
 }
 
-.compact {
-  height: 154px;
+/* 3. 오늘만인 경우 (선택됨) - 흰 배경, 테두리 진한 초록 */
+.selected {
+  background: #ffffff !important;
+  border: 1px solid #7B9E3E !important;
+  color: #7B9E3E !important;
 }
 
-.expanded {
-  min-height: 310px;
-  padding-bottom: 18px;
+/* 4. 오늘 + D-Day 겹침 (가장 강력함!) */
+/* 가장 마지막에 위치해서 위의 스타일을 다 덮어씌움 */
+.selected.hasDday {
+  background: #7B9E3E !important;
+  color: #ffffff !important;
+  border: none !important;
 }
 
-.large {
-  width: 318px;
-  min-height: 330px;
-  padding: 16px 18px 20px;
-  background: var(--color-white);
-  box-shadow: 0 18px 44px rgba(58, 66, 38, 0.24);
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 16px;
-  border-bottom: 1px solid rgba(119, 139, 62, 0.24);
-  padding: 0 0 8px;
-}
-
-.header button {
-  width: 24px;
-  height: 22px;
-  display: grid;
-  place-items: center;
-  background: transparent;
-  color: var(--color-text);
-  font-size: 0;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.header button::before {
-  content: '';
-  width: 0;
-  height: 0;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
-}
-
-.header button:first-child::before {
-  border-right: 9px solid var(--color-text);
-}
-
-.header button:last-child::before {
-  border-left: 9px solid var(--color-text);
-}
-
-.header h2 {
-  margin: 0;
-  color: var(--color-text);
-  font-size: 18px;
-  line-height: 20px;
-}
-
-.weekdays,
-.grid {
-  display: grid;
-  grid-template-columns: repeat(7, 47px);
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.weekdays {
-  margin-top: 8px;
-  color: var(--color-muted);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-.grid {
-  margin-top: 8px;
-  color: var(--color-muted);
-  row-gap: 2px;
-}
-
-.compact .grid {
-  grid-template-rows: repeat(2, 30px);
-}
-
-.expanded .grid {
-  row-gap: 8px;
-  margin-top: 12px;
-}
-
-.grid button {
-  width: 30px;
-  height: 30px;
-  justify-self: center;
-  position: relative;
-  border-radius: 10px;
-  background: transparent;
-  color: inherit;
-  font-size: 18px;
-  font-weight: 500;
-}
-
-.large .grid {
-  row-gap: 10px;
-  margin-top: 14px;
-}
-
-.large .grid button {
-  width: 34px;
-  height: 34px;
-}
-
-.grid .selected {
-  border: 1px solid var(--color-selected);
-  color: var(--color-selected);
-  background: var(--color-white);
-}
-
-.compact .grid .selected,
-.expanded .grid .selected {
-  transform: translate(-3px, -1px);
-}
-
-.expandButton {
-  display: none;
-}
-
-.compact .expandButton,
-.expanded .expandButton {
-  position: absolute;
-  left: 50%;
-  bottom: 7px;
-  display: block;
-  width: 18px;
-  height: 14px;
-  background: transparent;
-  transform: translateX(-50%);
-}
-
-.compact .expandButton::before,
-.expanded .expandButton::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 2px;
-  width: 7px;
-  height: 7px;
-  border-right: 1.5px solid var(--color-selected);
-  border-bottom: 1.5px solid var(--color-selected);
-  transform: translateX(-50%) rotate(45deg);
-}
-
-.expanded .collapseButton::before {
-  top: 5px;
-  transform: translateX(-50%) rotate(225deg);
-}
-
-.large .grid .selected {
-  background: var(--color-card-green);
-}
-
-.outside {
-  opacity: 0.28;
-}
+/* --- 기타 버튼 스타일 --- */
+.expandButton { display: none; }
+.compact .expandButton, .expanded .expandButton { position: absolute; left: 50%; bottom: 7px; display: block; width: 18px; height: 14px; background: transparent; transform: translateX(-50%); }
