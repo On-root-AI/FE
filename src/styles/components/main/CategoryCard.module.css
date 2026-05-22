@@ -1,0 +1,112 @@
+.card {
+  position: relative;
+  width: 320px;
+  min-height: 140px;
+  display: grid;
+  align-content: start;
+  padding: 10px 17px 14px;
+  border-radius: 16.226px;
+  background: #e5f0bc;
+  color: var(--color-text);
+}
+
+.header {
+  position: relative;
+  height: 29px;
+  border-bottom: 1px solid rgba(125, 128, 108, 0.35);
+}
+
+.categoryIcon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 20px;
+  height: 18px;
+  object-fit: contain;
+}
+
+.header h3 {
+  position: absolute;
+  left: 26px;
+  top: 0;
+  margin: 0;
+  max-width: 185px;
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 19px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.addButton,
+.menuButton {
+  position: absolute;
+  display: block;
+  background: transparent;
+  color: var(--color-text);
+}
+
+.addButton {
+  right: 30px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+}
+
+.addButton span {
+  position: relative;
+  display: block;
+  width: 10px;
+  height: 10px;
+}
+
+.addButton span::before,
+.addButton span::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 999px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+
+.addButton span::before {
+  width: 10px;
+  height: 2px;
+}
+
+.addButton span::after {
+  width: 2px;
+  height: 10px;
+}
+
+.menuButton {
+  right: 7px;
+  top: 6px;
+  width: 13px;
+  height: 14px;
+}
+
+.menuButton span {
+  display: block;
+  width: 14px;
+  height: 3px;
+  background:
+    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) left
+      center / 3px 3px no-repeat,
+    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) center /
+      3px 3px no-repeat,
+    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) right
+      center / 3px 3px no-repeat;
+}
+
+.tasks {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
