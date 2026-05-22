@@ -9,6 +9,10 @@
   overflow: hidden;
 }
 
+.summaryList {
+  display: grid;
+}
+
 .summary {
   position: relative;
   min-height: 50px;
@@ -19,6 +23,10 @@
   background: transparent;
   color: var(--color-text);
   text-align: left;
+}
+
+.summary + .summary {
+  border-top: 1px solid rgba(255, 255, 255, 0.35);
 }
 
 .summaryContent {

@@ -1,5 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  createDDay,
+  deleteDDay as deleteDDayRequest,
+  getDDays,
+  updateDDay,
+} from '../apis/dday.js';
 import ActionCard from '../components/common/ActionCard.jsx';
 import AppHeader from '../components/common/AppHeader.jsx';
 import CalendarCard from '../components/main/CalendarCard.jsx';
@@ -27,10 +33,38 @@ export default function MainPage() {
   const [dDayStep, setDdayStep] = useState('idle');
   const [editingDdayId, setEditingDdayId] = useState(null);
   const [openDdayMenuId, setOpenDdayMenuId] = useState(null);
+  const [isDdaySaving, setIsDdaySaving] = useState(false);
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
   const [categories, setCategories] = useState([]);
   const [categoryInput, setCategoryInput] = useState(null);
   const [openCategoryMenuId, setOpenCategoryMenuId] = useState(null);
+
+  const refreshDdayItems = useCallback(async () => {
+    const items = await getDDays();
+    setDdayItems(items);
+    return items;
+  }, []);
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function loadDdays() {
+      try {
+        const items = await getDDays();
+        if (isActive) {
+          setDdayItems(items);
+        }
+      } catch (error) {
+        console.error('D-Day 목록을 불러오지 못했어요.', error);
+      }
+    }
+
+    loadDdays();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   const startDdayDraft = () => {
     setOpenDdayMenuId(null);
@@ -41,38 +75,31 @@ export default function MainPage() {
     setDdayStep('date');
   };
 
-  const openDatePicker = () => {
-    setOpenDdayMenuId(null);
-    setOpenCategoryMenuId(null);
-    setCategoryInput(null);
-    setDdayStep('date');
-  };
-
   const confirmDate = () => {
     setDdayStep('title');
   };
 
-  const completeDday = (title) => {
-    if (editingDdayId) {
-      setDdayItems((items) =>
-        items.map((item) =>
-          item.id === editingDdayId ? { ...item, title } : item
-        )
-      );
+  const completeDday = async (title) => {
+    if (isDdaySaving) return;
+
+    setIsDdaySaving(true);
+
+    try {
+      if (editingDdayId) {
+        await updateDDay(editingDdayId, { title, targetDate: draftDate });
+      } else {
+        await createDDay({ title, targetDate: draftDate });
+      }
+
+      await refreshDdayItems();
       setEditingDdayId(null);
       setDdayStep('idle');
-      return;
+    } catch (error) {
+      console.error('D-Day 저장에 실패했어요.', error);
+      alert('D-Day 저장에 실패했어요.');
+    } finally {
+      setIsDdaySaving(false);
     }
-
-    setDdayItems((items) => [
-      {
-        id: crypto.randomUUID(),
-        title,
-        date: draftDate,
-      },
-      ...items,
-    ]);
-    setDdayStep('idle');
   };
 
   const closeDdayFlow = () => {
@@ -97,12 +124,24 @@ export default function MainPage() {
     setDdayStep('title');
   };
 
-  const deleteDday = (id) => {
-    setDdayItems((items) => items.filter((item) => item.id !== id));
+  const deleteDday = async (id) => {
+    if (isDdaySaving) return;
+
     setOpenDdayMenuId(null);
-    if (editingDdayId === id) {
-      setEditingDdayId(null);
-      setDdayStep('idle');
+    setIsDdaySaving(true);
+
+    try {
+      await deleteDDayRequest(id);
+      await refreshDdayItems();
+      if (editingDdayId === id) {
+        setEditingDdayId(null);
+        setDdayStep('idle');
+      }
+    } catch (error) {
+      console.error('D-Day 삭제에 실패했어요.', error);
+      alert('D-Day 삭제에 실패했어요.');
+    } finally {
+      setIsDdaySaving(false);
     }
   };
 
@@ -251,44 +290,38 @@ export default function MainPage() {
     );
   };
 
-  const activeDday = dDayItems[0];
-  const handleDdayCardAdd =
-    activeDday && dDayStep === 'idle' ? startDdayDraft : openDatePicker;
-
   return (
     <MobileScreenLayout scrollable>
-      <AppHeader 
-        variant="home" 
-        subtitle={formatKoreanFullDate(today)} 
+      <AppHeader
+        variant="home"
+        subtitle={formatKoreanFullDate(today)}
         rightSlot={
-          <img 
-            src={mascotImg} 
-            alt="온루 키우기" 
-            style={{ 
-              width: '32px', 
-              height: '32px', 
+          <img
+            src={mascotImg}
+            alt="온루 키우기"
+            style={{
+              width: '32px',
+              height: '32px',
               cursor: 'pointer',
               position: 'relative',
-              zIndex: 10
+              zIndex: 10,
             }}
-            onClick={() => navigate('/growth')} 
+            onClick={() => navigate('/growth')}
           />
         }
       />
       <DateStrip selectedDate={today} />
 
       <div className={styles.content}>
-        {activeDday ? (
+        {dDayItems.length > 0 ? (
           <DdayCard
-            item={activeDday}
-            draftDate={draftDate}
+            items={dDayItems}
             today={today}
-            isMenuOpen={openDdayMenuId === activeDday.id}
-            onAdd={handleDdayCardAdd}
-            onSelectDate={openDatePicker}
-            onToggleMenu={() => toggleDdayMenu(activeDday.id)}
-            onEdit={() => editDday(activeDday.id)}
-            onDelete={() => deleteDday(activeDday.id)}
+            openMenuId={openDdayMenuId}
+            onAdd={startDdayDraft}
+            onToggleMenu={toggleDdayMenu}
+            onEdit={editDday}
+            onDelete={deleteDday}
           />
         ) : (
           <ActionCard onClick={startDdayDraft}>D-Day 추가하기</ActionCard>
