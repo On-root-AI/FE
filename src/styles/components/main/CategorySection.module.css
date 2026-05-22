@@ -1,0 +1,61 @@
+.section {
+  width: 330px;
+  display: grid;
+  gap: 5px;
+  padding: 5px;
+  border-radius: 20px;
+  background: #a5b457;
+  box-shadow: 0 10px 24px rgba(123, 135, 84, 0.16);
+}
+
+.list {
+  display: grid;
+  gap: 5px;
+}
+
+.addRow {
+  height: 43px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px;
+  border-radius: 16.226px;
+  background: rgba(197, 206, 152, 0.82);
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.addRow span {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--color-white);
+  color: var(--color-main);
+  font-size: 0;
+  line-height: 0;
+}
+
+.addRow span::before,
+.addRow span::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 999px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+
+.addRow span::before {
+  width: 9px;
+  height: 3px;
+}
+
+.addRow span::after {
+  width: 3px;
+  height: 9px;
+}
