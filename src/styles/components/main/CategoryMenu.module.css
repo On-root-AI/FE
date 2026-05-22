@@ -1,83 +1,44 @@
 .menu {
   position: absolute;
-  right: 7px;
-  top: 18px;
-  z-index: 5;
-  width: 60px;
-  height: 50px;
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  border-radius: 15px 3px 15px 15px;
-  background: var(--color-white);
-  box-shadow: 0 8px 18px rgba(66, 72, 43, 0.16);
-  overflow: hidden;
+  top: 36px;
+  right: 0;
+  width: 86px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  z-index: 50;
 }
 
 .menu button {
-  display: grid;
-  grid-template-columns: 1fr 12px;
+  display: flex;
   align-items: center;
-  column-gap: 3px;
-  padding: 0 10px 0 13px;
+  justify-content: space-between;
+  padding: 6px 14px;
   background: transparent;
-  color: #653f28;
-  font-size: 12px;
-  font-weight: 700;
+  border: none;
+  color: #4A4D41;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.menu button + button {
-  border-top: 1px solid rgba(101, 63, 40, 0.16);
+.menu button:hover {
+  background-color: #f7f8f3;
+}
+
+.divider {
+  height: 1px;
+  background-color: #E4E5DC;
+  margin: 4px 10px;
 }
 
 .editIcon,
 .deleteIcon {
-  position: relative;
-  width: 10px;
-  height: 10px;
-  color: #f2aa54;
-}
-
-.editIcon::before {
-  content: '';
-  position: absolute;
-  left: 1px;
-  top: 5px;
-  width: 9px;
-  height: 3px;
-  border-radius: 2px;
-  background: currentColor;
-  transform: rotate(-35deg);
-}
-
-.editIcon::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 2px;
-  width: 3px;
-  height: 3px;
-  border-radius: 1px;
-  background: currentColor;
-}
-
-.deleteIcon::before {
-  content: '';
-  position: absolute;
-  left: 2px;
-  top: 4px;
-  width: 7px;
-  height: 6px;
-  border-radius: 1px 1px 2px 2px;
-  background: currentColor;
-}
-
-.deleteIcon::after {
-  content: '';
-  position: absolute;
-  left: 1px;
-  top: 2px;
-  width: 9px;
-  height: 2px;
-  border-radius: 999px;
-  background: currentColor;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

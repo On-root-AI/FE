@@ -26,7 +26,6 @@ export default function AppHeader({
             ‹
           </button>
         ) : null}
-
         {variant === 'home' ? (
           <div className={styles.brandBlock}>
             <img className={styles.logo} src={onrootLogo} alt="onroot" />
@@ -35,7 +34,6 @@ export default function AppHeader({
         ) : (
           <img className={styles.chatLogo} src={onruaiLogo} alt={title} />
         )}
-
         <div className={styles.rightSlot}>
           {rightSlot ||
             (variant === 'home' ? <Mascot variant="small" size="sm" /> : null)}

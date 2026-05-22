@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { createDDay, deleteDDay as deleteDDayRequest, getDDays, updateDDay } from '../apis/dday.js';
 import ActionCard from '../components/common/ActionCard.jsx';
 import AppHeader from '../components/common/AppHeader.jsx';
+import Mascot from '../components/common/Mascot.jsx';
 import CalendarCard from '../components/main/CalendarCard.jsx';
 import CategorySection from '../components/main/CategorySection.jsx';
 import CategoryTextInput from '../components/main/CategoryTextInput.jsx';
@@ -14,7 +15,7 @@ import DdayTitleInput from '../components/main/DdayTitleInput.jsx';
 import MobileScreenLayout from '../components/layout/MobileScreenLayout.jsx';
 import styles from '../styles/pages/MainPage.module.css';
 import { formatKoreanFullDate } from '../utils/date.js';
-import mascotImg from '../assets/figma/mascot-small.png';
+
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -208,7 +209,12 @@ export default function MainPage() {
         variant="home"
         subtitle={formatKoreanFullDate(today)}
         rightSlot={
-          <img src={mascotImg} alt="온루 키우기" style={{ width: '32px', height: '32px', cursor: 'pointer', position: 'relative', zIndex: 10 }} onClick={() => navigate('/growth')} />
+          <Mascot
+            variant="small"
+            size="sm"
+            alt="온루 키우기"
+            onClick={() => navigate('/growth')}
+          />
         }
       />
       <DateStrip selectedDate={today} />
