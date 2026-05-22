@@ -41,3 +41,14 @@
 .chat {
   background: var(--color-chat-background);
 }
+
+@media (min-width: 480px) {
+  .viewport {
+    align-items: center;
+  }
+
+  .screen {
+    width: 390px;
+    height: min(var(--app-height, 100dvh), 844px);
+  }
+}

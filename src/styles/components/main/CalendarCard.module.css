@@ -1,7 +1,7 @@
 .card {
   position: relative;
   width: 330px;
-  padding: 10px 16px 12px;
+  padding: 10px 0 12px;
   border: 1px solid var(--color-selected);
   border-radius: var(--radius-lg);
   background: linear-gradient(180deg, #fcfdf6 0%, #f3f9e4 100%);
@@ -30,6 +30,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin: 0 16px;
   border-bottom: 1px solid rgba(119, 139, 62, 0.24);
   padding: 0 0 8px;
 }
@@ -72,8 +73,9 @@
 .weekdays,
 .grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, 47px);
   align-items: center;
+  justify-content: center;
   text-align: center;
 }
 
@@ -125,6 +127,11 @@
   border: 1px solid var(--color-selected);
   color: var(--color-selected);
   background: var(--color-white);
+}
+
+.compact .grid .selected,
+.expanded .grid .selected {
+  transform: translate(-3px, -1px);
 }
 
 .expandButton {
