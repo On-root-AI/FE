@@ -1,0 +1,82 @@
+.item {
+  display: grid;
+  grid-template-columns: 17px minmax(0, 1fr) 8px;
+  align-items: center;
+  column-gap: 10px;
+  min-height: 17px;
+  color: var(--color-text);
+}
+
+.checkButton,
+.deleteButton,
+.titleButton {
+  background: transparent;
+  color: inherit;
+}
+
+.checkButton {
+  width: 17px;
+  height: 17px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+}
+
+.checkButton span {
+  position: relative;
+  width: 17px;
+  height: 17px;
+  border: 1px solid #7d806c;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.completed .checkButton span {
+  border-color: #f2aa54;
+  background: var(--color-white);
+}
+
+.completed .checkButton span::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #f2aa54;
+  transform: translate(-50%, -50%);
+}
+
+.titleButton {
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.titleButton span {
+  display: block;
+  overflow: hidden;
+  color: #64675b;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 17px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.completed .titleButton span {
+  color: #8c8d80;
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.deleteButton {
+  width: 8px;
+  height: 17px;
+  padding: 0;
+  color: #7d806c;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 17px;
+}

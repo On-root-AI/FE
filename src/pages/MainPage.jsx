@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import ActionCard from '../components/common/ActionCard.jsx';
 import AppHeader from '../components/common/AppHeader.jsx';
 import CalendarCard from '../components/main/CalendarCard.jsx';
+import CategorySection from '../components/main/CategorySection.jsx';
+import CategoryTextInput from '../components/main/CategoryTextInput.jsx';
 import ChatFloatingButton from '../components/main/ChatFloatingButton.jsx';
 import DateStrip from '../components/main/DateStrip.jsx';
 import DatePickerModal from '../components/main/DatePickerModal.jsx';
@@ -26,9 +28,14 @@ export default function MainPage() {
   const [editingDdayId, setEditingDdayId] = useState(null);
   const [openDdayMenuId, setOpenDdayMenuId] = useState(null);
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [categoryInput, setCategoryInput] = useState(null);
+  const [openCategoryMenuId, setOpenCategoryMenuId] = useState(null);
 
   const startDdayDraft = () => {
     setOpenDdayMenuId(null);
+    setOpenCategoryMenuId(null);
+    setCategoryInput(null);
     setEditingDdayId(null);
     setDraftDate(today);
     setDdayStep('date');
@@ -36,6 +43,8 @@ export default function MainPage() {
 
   const openDatePicker = () => {
     setOpenDdayMenuId(null);
+    setOpenCategoryMenuId(null);
+    setCategoryInput(null);
     setDdayStep('date');
   };
 
@@ -72,6 +81,7 @@ export default function MainPage() {
   };
 
   const toggleDdayMenu = (id) => {
+    setOpenCategoryMenuId(null);
     setOpenDdayMenuId((currentId) => (currentId === id ? null : id));
   };
 
@@ -80,6 +90,8 @@ export default function MainPage() {
     if (!item) return;
 
     setOpenDdayMenuId(null);
+    setOpenCategoryMenuId(null);
+    setCategoryInput(null);
     setEditingDdayId(id);
     setDraftDate(item.date);
     setDdayStep('title');
@@ -98,6 +110,144 @@ export default function MainPage() {
     setCalendarMonth(
       (current) =>
         new Date(current.getFullYear(), current.getMonth() + amount, 1)
+    );
+  };
+
+  const closeDdayInteraction = () => {
+    setOpenDdayMenuId(null);
+    setEditingDdayId(null);
+    setDdayStep('idle');
+  };
+
+  const openCategoryInput = () => {
+    closeDdayInteraction();
+    setOpenCategoryMenuId(null);
+    setCategoryInput({
+      type: 'category',
+      placeholder: '카테고리를 입력하세요',
+    });
+  };
+
+  const openTaskInput = (categoryId) => {
+    closeDdayInteraction();
+    setOpenCategoryMenuId(null);
+    setCategoryInput({
+      type: 'task',
+      categoryId,
+      placeholder: '오늘의 루트를 입력하세요',
+    });
+  };
+
+  const openCategoryEdit = (categoryId) => {
+    const category = categories.find((item) => item.id === categoryId);
+    if (!category) return;
+
+    closeDdayInteraction();
+    setOpenCategoryMenuId(null);
+    setCategoryInput({
+      type: 'editCategory',
+      categoryId,
+      initialValue: category.title,
+      placeholder: '카테고리를 입력하세요',
+    });
+  };
+
+  const closeCategoryInput = () => {
+    setCategoryInput(null);
+  };
+
+  const submitCategoryInput = (value) => {
+    if (!categoryInput) return;
+
+    if (categoryInput.type === 'category') {
+      setCategories((items) => [
+        ...items,
+        {
+          id: crypto.randomUUID(),
+          title: value,
+          tasks: [],
+        },
+      ]);
+    }
+
+    if (categoryInput.type === 'task') {
+      setCategories((items) =>
+        items.map((category) =>
+          category.id === categoryInput.categoryId
+            ? {
+                ...category,
+                tasks: [
+                  ...category.tasks,
+                  {
+                    id: crypto.randomUUID(),
+                    title: value,
+                    completed: false,
+                  },
+                ],
+              }
+            : category
+        )
+      );
+    }
+
+    if (categoryInput.type === 'editCategory') {
+      setCategories((items) =>
+        items.map((category) =>
+          category.id === categoryInput.categoryId
+            ? { ...category, title: value }
+            : category
+        )
+      );
+    }
+
+    setCategoryInput(null);
+  };
+
+  const toggleCategoryMenu = (categoryId) => {
+    closeDdayInteraction();
+    setCategoryInput(null);
+    setOpenCategoryMenuId((currentId) =>
+      currentId === categoryId ? null : categoryId
+    );
+  };
+
+  const deleteCategory = (categoryId) => {
+    setCategories((items) =>
+      items.filter((category) => category.id !== categoryId)
+    );
+    setOpenCategoryMenuId(null);
+    if (categoryInput?.categoryId === categoryId) {
+      setCategoryInput(null);
+    }
+  };
+
+  const toggleCategoryTask = (categoryId, taskId) => {
+    setCategories((items) =>
+      items.map((category) =>
+        category.id === categoryId
+          ? {
+              ...category,
+              tasks: category.tasks.map((task) =>
+                task.id === taskId
+                  ? { ...task, completed: !task.completed }
+                  : task
+              ),
+            }
+          : category
+      )
+    );
+  };
+
+  const deleteCategoryTask = (categoryId, taskId) => {
+    setCategories((items) =>
+      items.map((category) =>
+        category.id === categoryId
+          ? {
+              ...category,
+              tasks: category.tasks.filter((task) => task.id !== taskId),
+            }
+          : category
+      )
     );
   };
 
@@ -154,7 +304,17 @@ export default function MainPage() {
           }
           size={isCalendarExpanded ? 'expanded' : 'compact'}
         />
-        <ActionCard tone="strong">카테고리 추가하기</ActionCard>
+        <CategorySection
+          categories={categories}
+          openMenuId={openCategoryMenuId}
+          onAddCategory={openCategoryInput}
+          onAddTask={openTaskInput}
+          onToggleMenu={toggleCategoryMenu}
+          onEditCategory={openCategoryEdit}
+          onDeleteCategory={deleteCategory}
+          onToggleTask={toggleCategoryTask}
+          onDeleteTask={deleteCategoryTask}
+        />
         <ChatFloatingButton />
       </div>
 
@@ -176,6 +336,17 @@ export default function MainPage() {
           }
           onSubmit={completeDday}
           onClose={closeDdayFlow}
+        />
+      ) : null}
+      {categoryInput ? (
+        <CategoryTextInput
+          key={`${categoryInput.type}-${categoryInput.categoryId || 'new'}-${
+            categoryInput.initialValue || ''
+          }`}
+          initialValue={categoryInput.initialValue}
+          placeholder={categoryInput.placeholder}
+          onSubmit={submitCategoryInput}
+          onClose={closeCategoryInput}
         />
       ) : null}
     </MobileScreenLayout>

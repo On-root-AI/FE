@@ -1,0 +1,83 @@
+.menu {
+  position: absolute;
+  right: 7px;
+  top: 18px;
+  z-index: 5;
+  width: 60px;
+  height: 50px;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  border-radius: 15px 3px 15px 15px;
+  background: var(--color-white);
+  box-shadow: 0 8px 18px rgba(66, 72, 43, 0.16);
+  overflow: hidden;
+}
+
+.menu button {
+  display: grid;
+  grid-template-columns: 1fr 12px;
+  align-items: center;
+  column-gap: 3px;
+  padding: 0 10px 0 13px;
+  background: transparent;
+  color: #653f28;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.menu button + button {
+  border-top: 1px solid rgba(101, 63, 40, 0.16);
+}
+
+.editIcon,
+.deleteIcon {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  color: #f2aa54;
+}
+
+.editIcon::before {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 5px;
+  width: 9px;
+  height: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  transform: rotate(-35deg);
+}
+
+.editIcon::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 2px;
+  width: 3px;
+  height: 3px;
+  border-radius: 1px;
+  background: currentColor;
+}
+
+.deleteIcon::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 4px;
+  width: 7px;
+  height: 6px;
+  border-radius: 1px 1px 2px 2px;
+  background: currentColor;
+}
+
+.deleteIcon::after {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 2px;
+  width: 9px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
