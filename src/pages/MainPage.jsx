@@ -39,8 +39,22 @@ export default function MainPage() {
   }, []);
 
   useEffect(() => {
-    refreshDdayItems();
-  }, [refreshDdayItems]);
+    let isActive = true;
+
+    getDDays()
+      .then((items) => {
+        if (isActive) {
+          setDdayItems(items);
+        }
+      })
+      .catch((error) => {
+        console.error('D-Day 목록을 불러오지 못했어요.', error);
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   const startDdayDraft = () => {
     setOpenDdayMenuId(null);

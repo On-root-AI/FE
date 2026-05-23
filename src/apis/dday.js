@@ -1,3 +1,5 @@
+import apiClient from './client.js';
+
 const LOCAL_STORAGE_KEY = 'onroot:ddays';
 const ID_KEYS = ['id', 'ddayId', 'dDayId', 'dday_id'];
 const TITLE_KEYS = ['title', 'name', 'content', 'label'];
@@ -49,6 +51,10 @@ function createLocalId() {
     globalThis.crypto?.randomUUID?.() ||
     `${Date.now()}-${Math.random().toString(36).slice(2)}`
   );
+}
+
+function shouldUseApi() {
+  return Boolean(import.meta.env.VITE_API_BASE_URL);
 }
 
 function normalizeDDayItem(data, fallback = {}) {
@@ -111,11 +117,22 @@ function writeLocalDDays(items) {
 }
 
 export async function getDDays() {
+  if (shouldUseApi()) {
+    const { data } = await apiClient.get('/api/ddays');
+    return normalizeDDayList(data);
+  }
+
   return readLocalDDays();
 }
 
 export async function createDDay({ title, targetDate }) {
   const payload = { title, targetDate: formatApiDate(targetDate) };
+
+  if (shouldUseApi()) {
+    const { data } = await apiClient.post('/api/ddays', payload);
+    return normalizeDDayItem(data, payload);
+  }
+
   const item = normalizeDDayItem({
     id: createLocalId(),
     ...payload,
@@ -127,6 +144,12 @@ export async function createDDay({ title, targetDate }) {
 
 export async function updateDDay(ddayId, { title, targetDate }) {
   const payload = { title, targetDate: formatApiDate(targetDate) };
+
+  if (shouldUseApi()) {
+    const { data } = await apiClient.patch(`/api/ddays/${ddayId}`, payload);
+    return normalizeDDayItem(data, { id: ddayId, ...payload });
+  }
+
   const items = readLocalDDays().map((item) =>
     item.id === ddayId
       ? {
@@ -141,5 +164,10 @@ export async function updateDDay(ddayId, { title, targetDate }) {
 }
 
 export async function deleteDDay(ddayId) {
+  if (shouldUseApi()) {
+    await apiClient.delete(`/api/ddays/${ddayId}`);
+    return;
+  }
+
   writeLocalDDays(readLocalDDays().filter((item) => item.id !== ddayId));
 }
