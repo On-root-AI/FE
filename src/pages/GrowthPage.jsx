@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AppHeader from '../components/common/AppHeader.jsx';
 import MobileScreenLayout from '../components/layout/MobileScreenLayout.jsx';
 import GrowthStageCard from '../components/main/GrowthStageCard.jsx';
+import { getDDays } from '../apis/dday.js';
 import { getStreak } from '../apis/streak.js';
 import styles from '../styles/pages/ChatPage.module.css';
 import seedImg from '../assets/figma/mascot-seed.png';
@@ -9,17 +10,38 @@ import sproutImg from '../assets/figma/mascot-sprout.png';
 import treeImg from '../assets/figma/mascot-tree.png';
 import fruitImg from '../assets/figma/mascot-chatbot.png';
 
+function calculateDdayStreak(items) {
+  return items.filter((item) => item?.date).length;
+}
+
 export default function GrowthPage() {
-  const [streakDays, setStreakDays] = useState(8);
+  const [streakDays, setStreakDays] = useState(0);
 
   useEffect(() => {
     let isActive = true;
 
-    getStreak()
-      .then((streak) => {
-        if (isActive && Number.isFinite(streak?.currentStreak)) {
-          setStreakDays(streak.currentStreak);
+    Promise.allSettled([getDDays(), getStreak()])
+      .then(([ddayResult, streakResult]) => {
+        if (!isActive) {
+          return;
         }
+
+        const ddayStreak =
+          ddayResult.status === 'fulfilled'
+            ? calculateDdayStreak(ddayResult.value)
+            : 0;
+
+        if (ddayStreak > 0) {
+          setStreakDays(ddayStreak);
+          return;
+        }
+
+        const apiStreak =
+          streakResult.status === 'fulfilled'
+            ? streakResult.value?.currentStreak
+            : 0;
+
+        setStreakDays(Number.isFinite(apiStreak) ? apiStreak : 0);
       })
       .catch((error) => {
         console.error('스트릭 정보를 불러오지 못했어요.', error);
