@@ -12,7 +12,10 @@ export default function CategoryTextInput({
   const inputRef = useRef(null);
 
   useEffect(() => {
-    const focusTimer = window.setTimeout(() => inputRef.current?.focus(), 0);
+    const focusTimer = window.setTimeout(() => {
+      inputRef.current?.focus({ preventScroll: true });
+      window.requestAnimationFrame(() => window.scrollTo(0, 0));
+    }, 0);
 
     return () => window.clearTimeout(focusTimer);
   }, []);
