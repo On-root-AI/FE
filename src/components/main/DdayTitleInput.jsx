@@ -12,7 +12,8 @@ export default function DdayTitleInput({
   const inputRef = useRef(null);
 
   useEffect(() => {
-    inputRef.current?.focus();
+    inputRef.current?.focus({ preventScroll: true });
+    window.requestAnimationFrame(() => window.scrollTo(0, 0));
   }, []);
 
   const handleSubmit = (event) => {

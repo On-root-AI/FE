@@ -1,17 +1,23 @@
 .form {
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  bottom: calc(24px + var(--keyboard-offset, 0px));
-  z-index: 25;
-  height: 40px;
+  --input-height: 58px;
+
+  position: fixed;
+  left: max(20px, calc((100vw - 390px) / 2 + 20px));
+  right: max(20px, calc((100vw - 390px) / 2 + 20px));
+  bottom: calc(
+    var(--chat-input-bottom, var(--keyboard-input-bottom, 24px)) +
+      env(safe-area-inset-bottom, 0px)
+  );
+  z-index: 1000;
+  min-height: var(--input-height);
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 8px 0 20px;
+  padding: 9px 10px 9px 18px;
+  border: 2px solid var(--color-text);
   border-radius: var(--radius-pill);
   background: var(--color-white);
-  box-shadow: 0 0 15px rgba(148, 154, 129, 0.3);
+  box-shadow: 0 18px 40px rgba(42, 45, 31, 0.22);
 }
 
 .form input {
@@ -29,8 +35,8 @@
 }
 
 .form button {
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
   flex: 0 0 auto;
