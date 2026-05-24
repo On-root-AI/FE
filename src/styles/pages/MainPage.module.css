@@ -1,3 +1,16 @@
+.logoutButton {
+  height: 20px;
+  padding: 0 7px;
+  border: 1px solid rgba(119, 139, 62, 0.28);
+  border-radius: 10px;
+  background: rgba(254, 255, 251, 0.72);
+  color: var(--color-selected);
+  font-size: 9px;
+  font-weight: 800;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
 .content {
   position: relative;
   z-index: 2;

@@ -8,6 +8,7 @@ export default function AppHeader({
   variant = 'home',
   title,
   subtitle,
+  subtitleAction,
   showBack = false,
   rightSlot,
 }) {
@@ -29,7 +30,10 @@ export default function AppHeader({
         {variant === 'home' ? (
           <div className={styles.brandBlock}>
             <img className={styles.logo} src={onrootLogo} alt="onroot" />
-            <p>{subtitle}</p>
+            <div className={styles.subtitleRow}>
+              <p>{subtitle}</p>
+              {subtitleAction}
+            </div>
           </div>
         ) : (
           <img className={styles.chatLogo} src={onruaiLogo} alt={title} />
