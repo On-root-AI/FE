@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { hasApiBaseUrl } from '../apis/client.js';
 import {
   createDDay,
   deleteDDay as deleteDDayRequest,
@@ -33,6 +32,15 @@ import DdayTitleInput from '../components/main/DdayTitleInput.jsx';
 import MobileScreenLayout from '../components/layout/MobileScreenLayout.jsx';
 import styles from '../styles/pages/MainPage.module.css';
 import { formatKoreanFullDate } from '../utils/date.js';
+import {
+  filterDeletedStudyPlanCategories,
+  isGeneratedStudyPlanCategory,
+  markStudyPlanCategoryDeleted,
+  mergeGeneratedStudyPlanCategories,
+  readGeneratedStudyPlanCategories,
+  removeGeneratedStudyPlanCategoryMatch,
+  writeGeneratedStudyPlanCategories,
+} from '../utils/generatedStudyPlans.js';
 
 function formatDateForApi(date) {
   const year = date.getFullYear();
@@ -66,7 +74,7 @@ function normalizeCategory(plan) {
 
 export default function MainPage() {
   const navigate = useNavigate();
-  const isCategoryApiEnabled = hasApiBaseUrl();
+  const [isCategoryApiEnabled, setIsCategoryApiEnabled] = useState(true);
   const today = useMemo(() => new Date(), []);
   const [calendarMonth, setCalendarMonth] = useState(
     () => new Date(today.getFullYear(), today.getMonth(), 1)
@@ -78,7 +86,9 @@ export default function MainPage() {
   const [openDdayMenuId, setOpenDdayMenuId] = useState(null);
   const [isDdaySaving, setIsDdaySaving] = useState(false);
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(() =>
+    readGeneratedStudyPlanCategories()
+  );
   const [categoryInput, setCategoryInput] = useState(null);
   const [openCategoryMenuId, setOpenCategoryMenuId] = useState(null);
   const [isCategorySaving, setIsCategorySaving] = useState(false);
@@ -114,30 +124,60 @@ export default function MainPage() {
 
   const refreshCategories = useCallback(async () => {
     if (!isCategoryApiEnabled) {
-      return [];
+      const generatedCategories = filterDeletedStudyPlanCategories(
+        readGeneratedStudyPlanCategories()
+      );
+      setCategories(generatedCategories);
+      return generatedCategories;
     }
 
-    const plans = await getPlans();
-    const planDetails = await Promise.all(
-      plans.map((plan) =>
-        getPlan(plan.id).catch(() => ({
-          ...plan,
-          tasks: [],
-        }))
-      )
-    );
-    const nextCategories = planDetails.map(normalizeCategory);
-    setCategories(nextCategories);
+    try {
+      const plans = await getPlans();
+      const planDetails = await Promise.all(
+        plans.map((plan) =>
+          getPlan(plan.id).catch(() => ({
+            ...plan,
+            tasks: [],
+          }))
+        )
+      );
+      const nextCategories = mergeGeneratedStudyPlanCategories(
+        planDetails.map(normalizeCategory)
+      );
+      setCategories(nextCategories);
 
-    return nextCategories;
+      return nextCategories;
+    } catch (error) {
+      console.error('카테고리 목록을 불러오지 못했어요.', error);
+      setIsCategoryApiEnabled(false);
+
+      const generatedCategories = filterDeletedStudyPlanCategories(
+        readGeneratedStudyPlanCategories()
+      );
+      setCategories(generatedCategories);
+
+      return generatedCategories;
+    }
   }, [isCategoryApiEnabled]);
 
   useEffect(() => {
-    if (!isCategoryApiEnabled) {
-      return undefined;
-    }
-
     let isActive = true;
+
+    if (!isCategoryApiEnabled) {
+      Promise.resolve().then(() => {
+        if (isActive) {
+          setCategories(
+            filterDeletedStudyPlanCategories(
+              readGeneratedStudyPlanCategories()
+            )
+          );
+        }
+      });
+
+      return () => {
+        isActive = false;
+      };
+    }
 
     getPlans()
       .then((plans) =>
@@ -152,11 +192,24 @@ export default function MainPage() {
       )
       .then((planDetails) => {
         if (isActive) {
-          setCategories(planDetails.map(normalizeCategory));
+          setCategories(
+            mergeGeneratedStudyPlanCategories(
+              planDetails.map(normalizeCategory)
+            )
+          );
         }
       })
       .catch((error) => {
         console.error('카테고리 목록을 불러오지 못했어요.', error);
+
+        if (isActive) {
+          setIsCategoryApiEnabled(false);
+          setCategories(
+            filterDeletedStudyPlanCategories(
+              readGeneratedStudyPlanCategories()
+            )
+          );
+        }
       });
 
     return () => {
@@ -290,6 +343,36 @@ export default function MainPage() {
 
   const closeCategoryInput = () => setCategoryInput(null);
 
+  const findCategory = (categoryId) =>
+    categories.find((category) => category.id === categoryId);
+
+  const shouldUseCategoryApi = (categoryId) => {
+    const category = findCategory(categoryId);
+
+    return Boolean(
+      isCategoryApiEnabled &&
+        category &&
+        !isGeneratedStudyPlanCategory(category)
+    );
+  };
+
+  const updateLocalCategories = (updater) => {
+    setCategories((items) => {
+      const nextItems = updater(items);
+      writeGeneratedStudyPlanCategories(nextItems);
+      return nextItems;
+    });
+  };
+
+  const removeCategoryFromView = (categoryId, category) => {
+    if (category) {
+      markStudyPlanCategoryDeleted(category);
+      removeGeneratedStudyPlanCategoryMatch(category);
+    }
+
+    setCategories((items) => items.filter((item) => item.id !== categoryId));
+  };
+
   const submitCategoryInput = async (value) => {
     if (!categoryInput) return;
 
@@ -305,7 +388,7 @@ export default function MainPage() {
       }
 
       if (categoryInput.type === 'task') {
-        if (isCategoryApiEnabled) {
+        if (shouldUseCategoryApi(categoryInput.categoryId)) {
           const category = categories.find(
             (item) => item.id === categoryInput.categoryId
           );
@@ -316,7 +399,7 @@ export default function MainPage() {
           });
           await refreshCategories();
         } else {
-          setCategories((items) =>
+          updateLocalCategories((items) =>
             items.map((category) =>
               category.id === categoryInput.categoryId
                 ? {
@@ -337,11 +420,11 @@ export default function MainPage() {
       }
 
       if (categoryInput.type === 'editCategory') {
-        if (isCategoryApiEnabled) {
+        if (shouldUseCategoryApi(categoryInput.categoryId)) {
           await updatePlan(categoryInput.categoryId, { title: value });
           await refreshCategories();
         } else {
-          setCategories((items) =>
+          updateLocalCategories((items) =>
             items.map((category) =>
               category.id === categoryInput.categoryId
                 ? { ...category, title: value }
@@ -371,23 +454,23 @@ export default function MainPage() {
   const deleteCategory = async (categoryId) => {
     if (isCategorySaving) return;
 
+    const category = findCategory(categoryId);
+
     setOpenCategoryMenuId(null);
     setIsCategorySaving(true);
 
     try {
-      if (isCategoryApiEnabled) {
+      if (shouldUseCategoryApi(categoryId)) {
         await deletePlanRequest(categoryId);
         await refreshCategories();
       } else {
-        setCategories((items) =>
-          items.filter((category) => category.id !== categoryId)
-        );
+        removeCategoryFromView(categoryId, category);
       }
 
       if (categoryInput?.categoryId === categoryId) setCategoryInput(null);
     } catch (error) {
       console.error('카테고리 삭제에 실패했어요.', error);
-      alert('카테고리 삭제에 실패했어요.');
+      removeCategoryFromView(categoryId, category);
     } finally {
       setIsCategorySaving(false);
     }
@@ -399,18 +482,18 @@ export default function MainPage() {
     const category = categories.find((item) => item.id === categoryId);
     const task = category?.tasks.find((item) => item.id === taskId);
 
-    if (isCategoryApiEnabled && task?.completed) {
+    if (shouldUseCategoryApi(categoryId) && task?.completed) {
       return;
     }
 
     setIsCategorySaving(true);
 
     try {
-      if (isCategoryApiEnabled) {
+      if (shouldUseCategoryApi(categoryId)) {
         await completeTask(categoryId, taskId);
         await refreshCategories();
       } else {
-        setCategories((items) =>
+        updateLocalCategories((items) =>
           items.map((category) =>
             category.id === categoryId
               ? {
@@ -439,11 +522,11 @@ export default function MainPage() {
     setIsCategorySaving(true);
 
     try {
-      if (isCategoryApiEnabled) {
+      if (shouldUseCategoryApi(categoryId)) {
         await deleteTaskRequest(categoryId, taskId);
         await refreshCategories();
       } else {
-        setCategories((items) =>
+        updateLocalCategories((items) =>
           items.map((category) =>
             category.id === categoryId
               ? {

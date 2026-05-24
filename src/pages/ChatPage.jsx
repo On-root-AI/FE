@@ -10,6 +10,7 @@ import StudyPlanCard from '../components/chat/StudyPlanCard.jsx';
 import chatBottomMascot from '../assets/figma/Chat_btm.png';
 import chatSideMascot from '../assets/figma/Chat_side.png';
 import { sendChatMessage } from '../apis/chat.js';
+import { saveGeneratedStudyPlanCategory } from '../utils/generatedStudyPlans.js';
 import styles from '../styles/pages/ChatPage.module.css';
 
 export default function ChatPage() {
@@ -52,6 +53,13 @@ export default function ChatPage() {
 
     try {
       const response = await sendChatMessage(text);
+      if (response.studyPlan?.length) {
+        saveGeneratedStudyPlanCategory({
+          title: response.title,
+          days: response.studyPlan,
+        });
+      }
+
       setMessages((prev) => [
         ...prev,
         {
