@@ -1,5 +1,5 @@
 .section {
-  width: 330px;
+  width: 100%;
   display: grid;
   gap: 5px;
   padding: 5px;

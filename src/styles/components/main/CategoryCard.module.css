@@ -1,6 +1,6 @@
 .card {
   position: relative;
-  width: 320px;
+  width: 100%;
   min-height: 140px;
   display: grid;
   align-content: start;

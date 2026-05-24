@@ -11,7 +11,10 @@ export default function MobileScreenLayout({
     const root = document.documentElement;
 
     const setAppHeight = () => {
-      root.style.setProperty('--app-height', `${window.innerHeight}px`);
+      const visualHeight = window.visualViewport?.height || 0;
+      const appHeight = Math.ceil(Math.max(window.innerHeight, visualHeight));
+
+      root.style.setProperty('--app-height', `${appHeight}px`);
     };
 
     const setKeyboardOffset = () => {
@@ -26,11 +29,15 @@ export default function MobileScreenLayout({
     setAppHeight();
     setKeyboardOffset();
     window.addEventListener('resize', setAppHeight);
+    window.visualViewport?.addEventListener('resize', setAppHeight);
+    window.visualViewport?.addEventListener('scroll', setAppHeight);
     window.visualViewport?.addEventListener('resize', setKeyboardOffset);
     window.visualViewport?.addEventListener('scroll', setKeyboardOffset);
 
     return () => {
       window.removeEventListener('resize', setAppHeight);
+      window.visualViewport?.removeEventListener('resize', setAppHeight);
+      window.visualViewport?.removeEventListener('scroll', setAppHeight);
       window.visualViewport?.removeEventListener('resize', setKeyboardOffset);
       window.visualViewport?.removeEventListener('scroll', setKeyboardOffset);
     };

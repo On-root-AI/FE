@@ -6,13 +6,7 @@
   display: flex;
   justify-content: center;
   align-items: stretch;
-  background:
-    radial-gradient(
-      circle at 20% 0%,
-      rgba(223, 239, 136, 0.35),
-      transparent 32%
-    ),
-    #e7eadb;
+  background: var(--color-background);
   overflow: hidden;
 }
 
@@ -20,11 +14,9 @@
   position: relative;
   flex: 0 0 auto;
   width: 100%;
-  max-width: 390px;
   height: var(--app-height, 100dvh);
   overflow: hidden;
   color: var(--color-text);
-  box-shadow: 0 24px 80px rgba(46, 54, 31, 0.2);
 }
 
 .scrollable {
@@ -48,9 +40,18 @@
 @media (min-width: 480px) {
   .viewport {
     align-items: center;
+    background:
+      radial-gradient(
+        circle at 20% 0%,
+        rgba(223, 239, 136, 0.35),
+        transparent 32%
+      ),
+      #e7eadb;
   }
 
   .screen {
+    max-width: 390px;
     height: min(var(--app-height, 100dvh), 844px);
+    box-shadow: 0 24px 80px rgba(46, 54, 31, 0.2);
   }
 }

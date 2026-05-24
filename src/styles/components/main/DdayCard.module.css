@@ -1,12 +1,12 @@
 .card {
   position: relative;
-  width: 330px;
+  width: 100%;
   min-height: 103px;
   display: grid;
   align-content: start;
   border-radius: var(--radius-lg);
   background: #f6d87b;
-  overflow: visible; 
+  overflow: visible;
 }
 
 .summaryList {
@@ -89,16 +89,19 @@
   width: 13px;
   height: 3px;
   background:
-    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) left center / 3px 3px no-repeat,
-    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) center / 3px 3px no-repeat,
-    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) right center / 3px 3px no-repeat;
+    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) left
+      center / 3px 3px no-repeat,
+    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) center /
+      3px 3px no-repeat,
+    radial-gradient(circle, currentColor 0 1.5px, transparent 1.6px) right
+      center / 3px 3px no-repeat;
 }
 
 .menu {
   position: absolute;
-  right: 10px; 
+  right: 10px;
   top: 36px;
-  z-index: 100; 
+  z-index: 100;
   width: 90px;
   background: var(--color-white);
   border-radius: 12px;
@@ -115,7 +118,7 @@
   padding: 8px 14px;
   background: transparent;
   border: none;
-  color: #4A4D41;
+  color: #4a4d41;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -131,7 +134,7 @@
 
 .divider {
   height: 1px;
-  background-color: #E4E5DC;
+  background-color: #e4e5dc;
   margin: 4px 10px;
 }
 /* ------------------------------------- */
@@ -173,5 +176,11 @@
   transform: translate(-50%, -50%);
 }
 
-.addRow span::before { width: 9px; height: 3px; }
-.addRow span::after { width: 3px; height: 9px; }
+.addRow span::before {
+  width: 9px;
+  height: 3px;
+}
+.addRow span::after {
+  width: 3px;
+  height: 9px;
+}
