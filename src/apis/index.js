@@ -5,4 +5,8 @@ export * from './plan.js';
 export * from './streak.js';
 export * from './task.js';
 export * from './user.js';
-export { default as apiClient, setApiAuthToken } from './client.js';
+export {
+  default as apiClient,
+  hasApiBaseUrl,
+  setApiAuthToken,
+} from './client.js';

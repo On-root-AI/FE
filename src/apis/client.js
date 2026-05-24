@@ -10,6 +10,10 @@ const apiClient = axios.create({
   },
 });
 
+export function hasApiBaseUrl() {
+  return Boolean(import.meta.env.VITE_API_BASE_URL);
+}
+
 function getStoredApiAuthToken() {
   if (typeof window === 'undefined') {
     return null;

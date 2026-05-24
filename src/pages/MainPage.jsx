@@ -1,6 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createDDay, deleteDDay as deleteDDayRequest, getDDays, updateDDay } from '../apis/dday.js';
+import { hasApiBaseUrl } from '../apis/client.js';
+import {
+  createDDay,
+  deleteDDay as deleteDDayRequest,
+  getDDays,
+  updateDDay,
+} from '../apis/dday.js';
+import {
+  deletePlan as deletePlanRequest,
+  getPlan,
+  getPlans,
+  updatePlan,
+} from '../apis/plan.js';
+import {
+  completeTask,
+  createTask,
+  deleteTask as deleteTaskRequest,
+} from '../apis/task.js';
 import ActionCard from '../components/common/ActionCard.jsx';
 import AppHeader from '../components/common/AppHeader.jsx';
 import Mascot from '../components/common/Mascot.jsx';
@@ -16,11 +33,43 @@ import MobileScreenLayout from '../components/layout/MobileScreenLayout.jsx';
 import styles from '../styles/pages/MainPage.module.css';
 import { formatKoreanFullDate } from '../utils/date.js';
 
+function formatDateForApi(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function normalizeTask(task) {
+  return {
+    id: task.id,
+    title: task.title,
+    completed: Boolean(task.completedAt),
+    scheduledDate: task.scheduledDate,
+    orderIndex: task.orderIndex ?? 0,
+  };
+}
+
+function normalizeCategory(plan) {
+  return {
+    id: plan.id,
+    title: plan.title || plan.category || '학습 계획',
+    category: plan.category,
+    targetDate: plan.targetDate,
+    tasks: (plan.tasks || [])
+      .map(normalizeTask)
+      .sort((a, b) => a.orderIndex - b.orderIndex),
+  };
+}
 
 export default function MainPage() {
   const navigate = useNavigate();
+  const isCategoryApiEnabled = hasApiBaseUrl();
   const today = useMemo(() => new Date(), []);
-  const [calendarMonth, setCalendarMonth] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
+  const [calendarMonth, setCalendarMonth] = useState(
+    () => new Date(today.getFullYear(), today.getMonth(), 1)
+  );
   const [dDayItems, setDdayItems] = useState([]);
   const [draftDate, setDraftDate] = useState(today);
   const [dDayStep, setDdayStep] = useState('idle');
@@ -31,6 +80,7 @@ export default function MainPage() {
   const [categories, setCategories] = useState([]);
   const [categoryInput, setCategoryInput] = useState(null);
   const [openCategoryMenuId, setOpenCategoryMenuId] = useState(null);
+  const [isCategorySaving, setIsCategorySaving] = useState(false);
 
   const refreshDdayItems = useCallback(async () => {
     const items = await getDDays();
@@ -55,6 +105,58 @@ export default function MainPage() {
       isActive = false;
     };
   }, []);
+
+  const refreshCategories = useCallback(async () => {
+    if (!isCategoryApiEnabled) {
+      return [];
+    }
+
+    const plans = await getPlans();
+    const planDetails = await Promise.all(
+      plans.map((plan) =>
+        getPlan(plan.id).catch(() => ({
+          ...plan,
+          tasks: [],
+        }))
+      )
+    );
+    const nextCategories = planDetails.map(normalizeCategory);
+    setCategories(nextCategories);
+
+    return nextCategories;
+  }, [isCategoryApiEnabled]);
+
+  useEffect(() => {
+    if (!isCategoryApiEnabled) {
+      return undefined;
+    }
+
+    let isActive = true;
+
+    getPlans()
+      .then((plans) =>
+        Promise.all(
+          plans.map((plan) =>
+            getPlan(plan.id).catch(() => ({
+              ...plan,
+              tasks: [],
+            }))
+          )
+        )
+      )
+      .then((planDetails) => {
+        if (isActive) {
+          setCategories(planDetails.map(normalizeCategory));
+        }
+      })
+      .catch((error) => {
+        console.error('카테고리 목록을 불러오지 못했어요.', error);
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [isCategoryApiEnabled]);
 
   const startDdayDraft = () => {
     setOpenDdayMenuId(null);
@@ -129,7 +231,8 @@ export default function MainPage() {
 
   const moveCalendarMonth = (amount) => {
     setCalendarMonth(
-      (current) => new Date(current.getFullYear(), current.getMonth() + amount, 1)
+      (current) =>
+        new Date(current.getFullYear(), current.getMonth() + amount, 1)
     );
   };
 
@@ -142,13 +245,28 @@ export default function MainPage() {
   const openCategoryInput = () => {
     closeDdayInteraction();
     setOpenCategoryMenuId(null);
-    setCategoryInput({ type: 'category', placeholder: '카테고리를 입력하세요' });
+
+    if (isCategoryApiEnabled) {
+      alert(
+        '현재 백엔드에는 카테고리 생성 API가 없어 기존 학습 계획만 표시돼요.'
+      );
+      return;
+    }
+
+    setCategoryInput({
+      type: 'category',
+      placeholder: '카테고리를 입력하세요',
+    });
   };
 
   const openTaskInput = (categoryId) => {
     closeDdayInteraction();
     setOpenCategoryMenuId(null);
-    setCategoryInput({ type: 'task', categoryId, placeholder: '오늘의 루트를 입력하세요' });
+    setCategoryInput({
+      type: 'task',
+      categoryId,
+      placeholder: '오늘의 루트를 입력하세요',
+    });
   };
 
   const openCategoryEdit = (categoryId) => {
@@ -156,65 +274,186 @@ export default function MainPage() {
     if (!category) return;
     closeDdayInteraction();
     setOpenCategoryMenuId(null);
-    setCategoryInput({ type: 'editCategory', categoryId, initialValue: category.title, placeholder: '카테고리를 입력하세요' });
+    setCategoryInput({
+      type: 'editCategory',
+      categoryId,
+      initialValue: category.title,
+      placeholder: '카테고리를 입력하세요',
+    });
   };
 
   const closeCategoryInput = () => setCategoryInput(null);
 
-  const submitCategoryInput = (value) => {
+  const submitCategoryInput = async (value) => {
     if (!categoryInput) return;
-    if (categoryInput.type === 'category') {
-      setCategories((items) => [...items, { id: crypto.randomUUID(), title: value, tasks: [] }]);
+
+    if (isCategorySaving) return;
+    setIsCategorySaving(true);
+
+    try {
+      if (categoryInput.type === 'category') {
+        setCategories((items) => [
+          ...items,
+          { id: crypto.randomUUID(), title: value, tasks: [] },
+        ]);
+      }
+
+      if (categoryInput.type === 'task') {
+        if (isCategoryApiEnabled) {
+          const category = categories.find(
+            (item) => item.id === categoryInput.categoryId
+          );
+          await createTask(categoryInput.categoryId, {
+            title: value,
+            scheduledDate: formatDateForApi(today),
+            orderIndex: category?.tasks.length || 0,
+          });
+          await refreshCategories();
+        } else {
+          setCategories((items) =>
+            items.map((category) =>
+              category.id === categoryInput.categoryId
+                ? {
+                    ...category,
+                    tasks: [
+                      ...category.tasks,
+                      {
+                        id: crypto.randomUUID(),
+                        title: value,
+                        completed: false,
+                      },
+                    ],
+                  }
+                : category
+            )
+          );
+        }
+      }
+
+      if (categoryInput.type === 'editCategory') {
+        if (isCategoryApiEnabled) {
+          await updatePlan(categoryInput.categoryId, { title: value });
+          await refreshCategories();
+        } else {
+          setCategories((items) =>
+            items.map((category) =>
+              category.id === categoryInput.categoryId
+                ? { ...category, title: value }
+                : category
+            )
+          );
+        }
+      }
+
+      setCategoryInput(null);
+    } catch (error) {
+      console.error('카테고리 저장에 실패했어요.', error);
+      alert('카테고리 저장에 실패했어요.');
+    } finally {
+      setIsCategorySaving(false);
     }
-    if (categoryInput.type === 'task') {
-      setCategories((items) =>
-        items.map((category) =>
-          category.id === categoryInput.categoryId
-            ? { ...category, tasks: [...category.tasks, { id: crypto.randomUUID(), title: value, completed: false }] }
-            : category
-        )
-      );
-    }
-    if (categoryInput.type === 'editCategory') {
-      setCategories((items) =>
-        items.map((category) =>
-          category.id === categoryInput.categoryId ? { ...category, title: value } : category
-        )
-      );
-    }
-    setCategoryInput(null);
   };
 
   const toggleCategoryMenu = (categoryId) => {
     closeDdayInteraction();
     setCategoryInput(null);
-    setOpenCategoryMenuId((currentId) => (currentId === categoryId ? null : categoryId));
+    setOpenCategoryMenuId((currentId) =>
+      currentId === categoryId ? null : categoryId
+    );
   };
 
-  const deleteCategory = (categoryId) => {
-    setCategories((items) => items.filter((category) => category.id !== categoryId));
+  const deleteCategory = async (categoryId) => {
+    if (isCategorySaving) return;
+
     setOpenCategoryMenuId(null);
-    if (categoryInput?.categoryId === categoryId) setCategoryInput(null);
+    setIsCategorySaving(true);
+
+    try {
+      if (isCategoryApiEnabled) {
+        await deletePlanRequest(categoryId);
+        await refreshCategories();
+      } else {
+        setCategories((items) =>
+          items.filter((category) => category.id !== categoryId)
+        );
+      }
+
+      if (categoryInput?.categoryId === categoryId) setCategoryInput(null);
+    } catch (error) {
+      console.error('카테고리 삭제에 실패했어요.', error);
+      alert('카테고리 삭제에 실패했어요.');
+    } finally {
+      setIsCategorySaving(false);
+    }
   };
 
-  const toggleCategoryTask = (categoryId, taskId) => {
-    setCategories((items) =>
-      items.map((category) =>
-        category.id === categoryId
-          ? { ...category, tasks: category.tasks.map((task) => (task.id === taskId ? { ...task, completed: !task.completed } : task)) }
-          : category
-      )
-    );
+  const toggleCategoryTask = async (categoryId, taskId) => {
+    if (isCategorySaving) return;
+
+    const category = categories.find((item) => item.id === categoryId);
+    const task = category?.tasks.find((item) => item.id === taskId);
+
+    if (isCategoryApiEnabled && task?.completed) {
+      return;
+    }
+
+    setIsCategorySaving(true);
+
+    try {
+      if (isCategoryApiEnabled) {
+        await completeTask(categoryId, taskId);
+        await refreshCategories();
+      } else {
+        setCategories((items) =>
+          items.map((category) =>
+            category.id === categoryId
+              ? {
+                  ...category,
+                  tasks: category.tasks.map((task) =>
+                    task.id === taskId
+                      ? { ...task, completed: !task.completed }
+                      : task
+                  ),
+                }
+              : category
+          )
+        );
+      }
+    } catch (error) {
+      console.error('루트 완료 처리에 실패했어요.', error);
+      alert('루트 완료 처리에 실패했어요.');
+    } finally {
+      setIsCategorySaving(false);
+    }
   };
 
-  const deleteCategoryTask = (categoryId, taskId) => {
-    setCategories((items) =>
-      items.map((category) =>
-        category.id === categoryId
-          ? { ...category, tasks: category.tasks.filter((task) => task.id !== taskId) }
-          : category
-      )
-    );
+  const deleteCategoryTask = async (categoryId, taskId) => {
+    if (isCategorySaving) return;
+
+    setIsCategorySaving(true);
+
+    try {
+      if (isCategoryApiEnabled) {
+        await deleteTaskRequest(categoryId, taskId);
+        await refreshCategories();
+      } else {
+        setCategories((items) =>
+          items.map((category) =>
+            category.id === categoryId
+              ? {
+                  ...category,
+                  tasks: category.tasks.filter((task) => task.id !== taskId),
+                }
+              : category
+          )
+        );
+      }
+    } catch (error) {
+      console.error('루트 삭제에 실패했어요.', error);
+      alert('루트 삭제에 실패했어요.');
+    } finally {
+      setIsCategorySaving(false);
+    }
   };
 
   return (
@@ -254,7 +493,9 @@ export default function MainPage() {
           ddayList={dDayItems}
           onPreviousMonth={() => moveCalendarMonth(-1)}
           onNextMonth={() => moveCalendarMonth(1)}
-          onToggleExpand={() => setIsCalendarExpanded((isExpanded) => !isExpanded)}
+          onToggleExpand={() =>
+            setIsCalendarExpanded((isExpanded) => !isExpanded)
+          }
           size={isCalendarExpanded ? 'expanded' : 'compact'}
         />
         <CategorySection
@@ -272,8 +513,24 @@ export default function MainPage() {
       </div>
 
       <div className={styles.bottomGlow} aria-hidden="true" />
-      {dDayStep === 'date' ? <DatePickerModal selectedDate={draftDate} onChange={setDraftDate} onConfirm={confirmDate} onClose={closeDdayFlow} /> : null}
-      {dDayStep === 'title' ? <DdayTitleInput selectedDate={draftDate} initialTitle={dDayItems.find((item) => item.id === editingDdayId)?.title || ''} onSubmit={completeDday} onClose={closeDdayFlow} /> : null}
+      {dDayStep === 'date' ? (
+        <DatePickerModal
+          selectedDate={draftDate}
+          onChange={setDraftDate}
+          onConfirm={confirmDate}
+          onClose={closeDdayFlow}
+        />
+      ) : null}
+      {dDayStep === 'title' ? (
+        <DdayTitleInput
+          selectedDate={draftDate}
+          initialTitle={
+            dDayItems.find((item) => item.id === editingDdayId)?.title || ''
+          }
+          onSubmit={completeDday}
+          onClose={closeDdayFlow}
+        />
+      ) : null}
       {categoryInput ? (
         <CategoryTextInput
           key={`${categoryInput.type}-${categoryInput.categoryId || 'new'}-${categoryInput.initialValue || ''}`}
