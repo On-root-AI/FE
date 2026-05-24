@@ -29,6 +29,7 @@ export default function LoginPage() {
 
     try {
       await login({ email: email.trim(), password });
+      document.activeElement?.blur();
       navigate('/main', { replace: true });
     } catch (error) {
       setErrorMessage(getErrorMessage(error));

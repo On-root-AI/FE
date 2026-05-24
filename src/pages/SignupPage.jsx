@@ -34,6 +34,7 @@ export default function SignupPage() {
         password,
         nickname: nickname.trim(),
       });
+      document.activeElement?.blur();
       navigate('/login', { replace: true });
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
