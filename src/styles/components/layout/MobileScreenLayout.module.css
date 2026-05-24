@@ -1,4 +1,5 @@
 .viewport {
+  width: 100vw;
   height: 100vh;
   height: 100dvh;
   height: var(--app-height, 100dvh);
@@ -17,7 +18,9 @@
 
 .screen {
   position: relative;
-  width: min(100vw, 390px);
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 390px;
   height: var(--app-height, 100dvh);
   overflow: hidden;
   color: var(--color-text);
@@ -48,7 +51,6 @@
   }
 
   .screen {
-    width: 390px;
     height: min(var(--app-height, 100dvh), 844px);
   }
 }

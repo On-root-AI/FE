@@ -22,6 +22,10 @@ function getStoredApiAuthToken() {
   return window.localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
 }
 
+export function getApiAuthToken() {
+  return getStoredApiAuthToken();
+}
+
 export function setApiAuthToken(token) {
   if (typeof window !== 'undefined') {
     if (token) {

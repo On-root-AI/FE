@@ -18,6 +18,7 @@ import {
   createTask,
   deleteTask as deleteTaskRequest,
 } from '../apis/task.js';
+import { logout } from '../apis/user.js';
 import ActionCard from '../components/common/ActionCard.jsx';
 import AppHeader from '../components/common/AppHeader.jsx';
 import Mascot from '../components/common/Mascot.jsx';
@@ -81,6 +82,11 @@ export default function MainPage() {
   const [categoryInput, setCategoryInput] = useState(null);
   const [openCategoryMenuId, setOpenCategoryMenuId] = useState(null);
   const [isCategorySaving, setIsCategorySaving] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
 
   const refreshDdayItems = useCallback(async () => {
     const items = await getDDays();
@@ -461,6 +467,15 @@ export default function MainPage() {
       <AppHeader
         variant="home"
         subtitle={formatKoreanFullDate(today)}
+        subtitleAction={
+          <button
+            className={styles.logoutButton}
+            type="button"
+            onClick={handleLogout}
+          >
+            로그아웃
+          </button>
+        }
         rightSlot={
           <Mascot
             variant="small"
