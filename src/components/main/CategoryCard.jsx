@@ -6,6 +6,8 @@ import styles from '../../styles/components/main/CategoryCard.module.css';
 export default function CategoryCard({
   category,
   isMenuOpen,
+  isCollapsed,
+  onToggleCollapse,
   onAddTask,
   onToggleMenu,
   onEdit,
@@ -14,7 +16,10 @@ export default function CategoryCard({
   onDeleteTask,
 }) {
   return (
-    <section className={styles.card} aria-label={`${category.title} 카테고리`}>
+    <section
+      className={`${styles.card} ${isCollapsed ? styles.collapsed : ''}`}
+      aria-label={`${category.title} 카테고리`}
+    >
       <header className={styles.header}>
         <img
           className={styles.categoryIcon}
@@ -23,6 +28,15 @@ export default function CategoryCard({
           aria-hidden="true"
         />
         <h3>{category.title}</h3>
+        <button
+          className={styles.collapseButton}
+          type="button"
+          aria-label={`${category.title} ${isCollapsed ? '펼치기' : '접기'}`}
+          aria-expanded={!isCollapsed}
+          onClick={onToggleCollapse}
+        >
+          <span aria-hidden="true" />
+        </button>
         <button
           className={styles.addButton}
           type="button"
@@ -45,7 +59,7 @@ export default function CategoryCard({
         ) : null}
       </header>
 
-      {category.tasks.length ? (
+      {!isCollapsed && category.tasks.length ? (
         <ul className={styles.tasks}>
           {category.tasks.map((task) => (
             <CategoryTaskItem

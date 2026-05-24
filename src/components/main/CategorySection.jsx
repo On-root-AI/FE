@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import ActionCard from '../common/ActionCard.jsx';
 import CategoryCard from './CategoryCard.jsx';
 import styles from '../../styles/components/main/CategorySection.module.css';
@@ -13,6 +14,37 @@ export default function CategorySection({
   onToggleTask,
   onDeleteTask,
 }) {
+  const [collapsedCategoryIds, setCollapsedCategoryIds] = useState(
+    () => new Set()
+  );
+
+  const toggleCollapse = (categoryId) => {
+    setCollapsedCategoryIds((currentIds) => {
+      const nextIds = new Set(currentIds);
+
+      if (nextIds.has(categoryId)) {
+        nextIds.delete(categoryId);
+      } else {
+        nextIds.add(categoryId);
+      }
+
+      return nextIds;
+    });
+  };
+
+  const handleAddTask = (categoryId) => {
+    setCollapsedCategoryIds((currentIds) => {
+      if (!currentIds.has(categoryId)) {
+        return currentIds;
+      }
+
+      const nextIds = new Set(currentIds);
+      nextIds.delete(categoryId);
+      return nextIds;
+    });
+    onAddTask(categoryId);
+  };
+
   if (!categories.length) {
     return (
       <ActionCard tone="strong" onClick={onAddCategory}>
@@ -29,7 +61,9 @@ export default function CategorySection({
             key={category.id}
             category={category}
             isMenuOpen={openMenuId === category.id}
-            onAddTask={() => onAddTask(category.id)}
+            isCollapsed={collapsedCategoryIds.has(category.id)}
+            onToggleCollapse={() => toggleCollapse(category.id)}
+            onAddTask={() => handleAddTask(category.id)}
             onToggleMenu={() => onToggleMenu(category.id)}
             onEdit={() => onEditCategory(category.id)}
             onDelete={() => onDeleteCategory(category.id)}
