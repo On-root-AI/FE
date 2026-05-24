@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getApiAuthToken } from '../apis/client.js';
 import onrootLogo from '../assets/figma/onroot-logo.png';
 import centerGlowImg from '../assets/figma/Ellipse 24.png'; 
 import Mascot from '../components/common/Mascot.jsx';
@@ -11,7 +12,7 @@ export default function SplashPage() {
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      navigate('/main', { replace: true });
+      navigate(getApiAuthToken() ? '/main' : '/login', { replace: true });
     }, 2500);
 
     return () => window.clearTimeout(timer);
