@@ -1,7 +1,10 @@
+import { useState } from 'react';
 import categoryIcon from '../../assets/figma/Category.png';
 import CategoryMenu from './CategoryMenu.jsx';
 import CategoryTaskItem from './CategoryTaskItem.jsx';
 import styles from '../../styles/components/main/CategoryCard.module.css';
+
+const DEFAULT_VISIBLE_TASK_COUNT = 3;
 
 export default function CategoryCard({
   category,
@@ -15,6 +18,13 @@ export default function CategoryCard({
   onToggleTask,
   onDeleteTask,
 }) {
+  const [isTaskListExpanded, setIsTaskListExpanded] = useState(false);
+  const hasHiddenTasks = category.tasks.length > DEFAULT_VISIBLE_TASK_COUNT;
+  const visibleTasks = isTaskListExpanded
+    ? category.tasks
+    : category.tasks.slice(0, DEFAULT_VISIBLE_TASK_COUNT);
+  const hiddenTaskCount = category.tasks.length - DEFAULT_VISIBLE_TASK_COUNT;
+
   return (
     <section
       className={`${styles.card} ${isCollapsed ? styles.collapsed : ''}`}
@@ -60,16 +70,32 @@ export default function CategoryCard({
       </header>
 
       {!isCollapsed && category.tasks.length ? (
-        <ul className={styles.tasks}>
-          {category.tasks.map((task) => (
-            <CategoryTaskItem
-              key={task.id}
-              task={task}
-              onToggle={() => onToggleTask(task.id)}
-              onDelete={() => onDeleteTask(task.id)}
-            />
-          ))}
-        </ul>
+        <>
+          <ul className={styles.tasks}>
+            {visibleTasks.map((task) => (
+              <CategoryTaskItem
+                key={task.id}
+                task={task}
+                onToggle={() => onToggleTask(task.id)}
+                onDelete={() => onDeleteTask(task.id)}
+              />
+            ))}
+          </ul>
+          {hasHiddenTasks ? (
+            <button
+              className={styles.taskMoreButton}
+              type="button"
+              aria-expanded={isTaskListExpanded}
+              onClick={() =>
+                setIsTaskListExpanded((isExpanded) => !isExpanded)
+              }
+            >
+              {isTaskListExpanded
+                ? '세부 항목 접기'
+                : `세부 항목 ${hiddenTaskCount}개 더보기`}
+            </button>
+          ) : null}
+        </>
       ) : null}
     </section>
   );
