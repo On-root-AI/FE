@@ -10,6 +10,11 @@ export async function getPlan(planId) {
   return data;
 }
 
+export async function createPlan(payload) {
+  const { data } = await apiClient.post('/api/plans', payload);
+  return data;
+}
+
 export async function updatePlan(planId, payload) {
   const { data } = await apiClient.patch(`/api/plans/${planId}`, payload);
   return data;

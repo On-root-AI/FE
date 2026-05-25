@@ -7,6 +7,7 @@ import {
   updateDDay,
 } from '../apis/dday.js';
 import {
+  createPlan,
   deletePlan as deletePlanRequest,
   getPlan,
   getPlans,
@@ -305,13 +306,6 @@ export default function MainPage() {
     closeDdayInteraction();
     setOpenCategoryMenuId(null);
 
-    if (isCategoryApiEnabled) {
-      alert(
-        '현재 백엔드에는 카테고리 생성 API가 없어 기존 학습 계획만 표시돼요.'
-      );
-      return;
-    }
-
     setCategoryInput({
       type: 'category',
       placeholder: '카테고리를 입력하세요',
@@ -381,10 +375,19 @@ export default function MainPage() {
 
     try {
       if (categoryInput.type === 'category') {
-        setCategories((items) => [
-          ...items,
-          { id: crypto.randomUUID(), title: value, tasks: [] },
-        ]);
+        if (isCategoryApiEnabled) {
+          await createPlan({
+            title: value,
+            category: value,
+            targetDate: formatDateForApi(today),
+          });
+          await refreshCategories();
+        } else {
+          setCategories((items) => [
+            ...items,
+            { id: crypto.randomUUID(), title: value, tasks: [] },
+          ]);
+        }
       }
 
       if (categoryInput.type === 'task') {
