@@ -22,6 +22,7 @@
 .scrollable {
   overflow-y: auto;
   overscroll-behavior: contain;
+  scroll-padding-bottom: calc(var(--keyboard-offset, 0px) + 96px);
   -webkit-overflow-scrolling: touch;
 }
 

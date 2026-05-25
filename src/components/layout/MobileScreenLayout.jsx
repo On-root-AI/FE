@@ -34,7 +34,14 @@ export default function MobileScreenLayout({
       root.style.setProperty('--keyboard-offset', `${keyboardOffset}px`);
       root.style.setProperty('--keyboard-input-bottom', `${inputBottom}px`);
 
-      window.scrollTo(0, 0);
+      const activeElement = document.activeElement;
+      const isTyping =
+        activeElement?.matches?.('input, textarea, [contenteditable="true"]') ||
+        false;
+
+      if (!isTyping) {
+        window.scrollTo(0, 0);
+      }
     };
 
     setAppHeight();

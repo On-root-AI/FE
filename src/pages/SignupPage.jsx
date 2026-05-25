@@ -5,6 +5,7 @@ import onrootLogo from '../assets/figma/onroot-logo.png';
 import Mascot from '../components/common/Mascot.jsx';
 import MobileScreenLayout from '../components/layout/MobileScreenLayout.jsx';
 import styles from '../styles/pages/AuthPage.module.css';
+import { scrollFocusedFieldIntoView } from '../utils/scrollFocusedFieldIntoView.js';
 
 function getErrorMessage(error) {
   return (
@@ -51,7 +52,11 @@ export default function SignupPage() {
           <Mascot variant="seed" size="sm" />
         </div>
 
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form
+          className={styles.form}
+          onFocusCapture={scrollFocusedFieldIntoView}
+          onSubmit={handleSubmit}
+        >
           <div className={styles.copy}>
             <h1>시작해볼까요?</h1>
             <p>온루트가 오늘의 계획을 함께 챙겨줄게요.</p>
