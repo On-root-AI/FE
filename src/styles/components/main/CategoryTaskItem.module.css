@@ -1,14 +1,46 @@
-.item {
+.swipeItem {
+  position: relative;
+  min-height: 25px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.swipeItem::after {
+  content: '삭제';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 70px;
   display: grid;
-  grid-template-columns: 17px minmax(0, 1fr) 8px;
+  place-items: center;
+  border-radius: 8px;
+  background: #d87761;
+  color: var(--color-white);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.item {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 17px minmax(0, 1fr);
   align-items: center;
   column-gap: 10px;
-  min-height: 17px;
+  min-height: 25px;
+  padding: 4px 0;
+  background: #e5f0bc;
   color: var(--color-text);
+  touch-action: pan-y;
+  transition: transform 160ms ease;
+}
+
+.dragging {
+  transition: none;
 }
 
 .checkButton,
-.deleteButton,
 .titleButton {
   background: transparent;
   color: inherit;
@@ -73,14 +105,4 @@
   color: #8c8d80;
   text-decoration: line-through;
   text-decoration-thickness: 1px;
-}
-
-.deleteButton {
-  width: 8px;
-  height: 17px;
-  padding: 0;
-  color: #7d806c;
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 17px;
 }

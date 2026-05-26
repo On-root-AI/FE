@@ -6,6 +6,55 @@ import styles from '../../styles/components/main/CategoryCard.module.css';
 
 const DEFAULT_VISIBLE_TASK_COUNT = 3;
 
+function TaskGroup({
+  title,
+  tasks,
+  emptyMessage,
+  isExpanded,
+  onToggleExpand,
+  onToggleTask,
+  onDeleteTask,
+}) {
+  const hasHiddenTasks = tasks.length > DEFAULT_VISIBLE_TASK_COUNT;
+  const visibleTasks = isExpanded
+    ? tasks
+    : tasks.slice(0, DEFAULT_VISIBLE_TASK_COUNT);
+  const hiddenTaskCount = tasks.length - DEFAULT_VISIBLE_TASK_COUNT;
+
+  return (
+    <section className={styles.taskGroup} aria-label={title}>
+      <h4 className={styles.taskGroupTitle}>
+        {title}
+        <span>{tasks.length}</span>
+      </h4>
+      {tasks.length ? (
+        <ul className={styles.tasks}>
+          {visibleTasks.map((task) => (
+            <CategoryTaskItem
+              key={task.id}
+              task={task}
+              onToggle={() => onToggleTask(task.id)}
+              onDelete={() => onDeleteTask(task.id)}
+            />
+          ))}
+        </ul>
+      ) : (
+        <p className={styles.emptyTaskText}>{emptyMessage}</p>
+      )}
+      {hasHiddenTasks ? (
+        <button
+          className={styles.taskMoreButton}
+          type="button"
+          aria-expanded={isExpanded}
+          onClick={onToggleExpand}
+        >
+          {isExpanded ? `${title} 접기` : `${hiddenTaskCount}개 더보기`}
+        </button>
+      ) : null}
+    </section>
+  );
+}
+
 export default function CategoryCard({
   category,
   isMenuOpen,
@@ -18,12 +67,19 @@ export default function CategoryCard({
   onToggleTask,
   onDeleteTask,
 }) {
-  const [isTaskListExpanded, setIsTaskListExpanded] = useState(false);
-  const hasHiddenTasks = category.tasks.length > DEFAULT_VISIBLE_TASK_COUNT;
-  const visibleTasks = isTaskListExpanded
-    ? category.tasks
-    : category.tasks.slice(0, DEFAULT_VISIBLE_TASK_COUNT);
-  const hiddenTaskCount = category.tasks.length - DEFAULT_VISIBLE_TASK_COUNT;
+  const [expandedGroups, setExpandedGroups] = useState({
+    today: false,
+    week: false,
+  });
+  const todayTasks = category.todayTasks || [];
+  const weekTasks = category.weekTasks || [];
+
+  const toggleTaskGroup = (group) => {
+    setExpandedGroups((currentGroups) => ({
+      ...currentGroups,
+      [group]: !currentGroups[group],
+    }));
+  };
 
   return (
     <section
@@ -69,33 +125,27 @@ export default function CategoryCard({
         ) : null}
       </header>
 
-      {!isCollapsed && category.tasks.length ? (
-        <>
-          <ul className={styles.tasks}>
-            {visibleTasks.map((task) => (
-              <CategoryTaskItem
-                key={task.id}
-                task={task}
-                onToggle={() => onToggleTask(task.id)}
-                onDelete={() => onDeleteTask(task.id)}
-              />
-            ))}
-          </ul>
-          {hasHiddenTasks ? (
-            <button
-              className={styles.taskMoreButton}
-              type="button"
-              aria-expanded={isTaskListExpanded}
-              onClick={() =>
-                setIsTaskListExpanded((isExpanded) => !isExpanded)
-              }
-            >
-              {isTaskListExpanded
-                ? '세부 항목 접기'
-                : `세부 항목 ${hiddenTaskCount}개 더보기`}
-            </button>
-          ) : null}
-        </>
+      {!isCollapsed ? (
+        <div className={styles.taskGroups}>
+          <TaskGroup
+            title="오늘 할 일"
+            tasks={todayTasks}
+            emptyMessage="오늘은 예정된 계획이 없어요."
+            isExpanded={expandedGroups.today}
+            onToggleExpand={() => toggleTaskGroup('today')}
+            onToggleTask={onToggleTask}
+            onDeleteTask={onDeleteTask}
+          />
+          <TaskGroup
+            title="이번 주 할 일"
+            tasks={weekTasks}
+            emptyMessage="이번 주 예정된 계획이 없어요."
+            isExpanded={expandedGroups.week}
+            onToggleExpand={() => toggleTaskGroup('week')}
+            onToggleTask={onToggleTask}
+            onDeleteTask={onDeleteTask}
+          />
+        </div>
       ) : null}
     </section>
   );

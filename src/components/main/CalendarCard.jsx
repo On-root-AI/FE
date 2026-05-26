@@ -10,6 +10,7 @@ export default function CalendarCard({
   displayDate = new Date(),
   selectedDate = new Date(),
   ddayList = [],
+  scheduledTaskList = [],
   onPreviousMonth,
   onNextMonth,
   onSelectDate,
@@ -40,8 +41,12 @@ export default function CalendarCard({
           const matchedDday = ddayList.find((dday) =>
             isSameDay(new Date(dday.date), cell.date)
           );
+          const matchedTasks = scheduledTaskList.filter((task) =>
+            isSameDay(new Date(task.date), cell.date)
+          );
           // [수정] 오늘인지 확인
           const isSelected = isSameDay(cell.date, selectedDate);
+          const hasScheduledTask = matchedTasks.length > 0;
 
           return (
             <button
@@ -51,10 +56,14 @@ export default function CalendarCard({
                 isSelected ? styles.selected : '',
                 !cell.inCurrentMonth ? styles.outside : '',
                 matchedDday ? styles.hasDday : '', // D-Day일 때 클래스 부여
+                hasScheduledTask ? styles.hasSchedule : '',
               ].join(' ')}
               onClick={() => onSelectDate?.(cell.date)}
             >
               {cell.day}
+              {hasScheduledTask ? (
+                <span className={styles.scheduleDot} aria-hidden="true" />
+              ) : null}
             </button>
           );
         })}

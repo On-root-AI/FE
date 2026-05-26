@@ -32,10 +32,14 @@ import DdayCard from '../components/main/DdayCard.jsx';
 import DdayTitleInput from '../components/main/DdayTitleInput.jsx';
 import MobileScreenLayout from '../components/layout/MobileScreenLayout.jsx';
 import styles from '../styles/pages/MainPage.module.css';
-import { formatKoreanFullDate } from '../utils/date.js';
+import {
+  formatKoreanFullDate,
+  isSameDay,
+  startOfDay,
+} from '../utils/date.js';
 import {
   filterDeletedStudyPlanCategories,
-  isGeneratedStudyPlanCategory,
+  isGeneratedStudyPlanCategoryId,
   markStudyPlanCategoryDeleted,
   mergeGeneratedStudyPlanCategories,
   readGeneratedStudyPlanCategories,
@@ -73,6 +77,136 @@ function normalizeCategory(plan) {
   };
 }
 
+function updateTaskCompletion(categories, categoryId, taskId, completed) {
+  return categories.map((category) =>
+    category.id === categoryId
+      ? {
+          ...category,
+          tasks: category.tasks.map((task) =>
+            task.id === taskId ? { ...task, completed } : task
+          ),
+        }
+      : category
+  );
+}
+
+function collectScheduledTaskDates(categories) {
+  return categories.flatMap((category) =>
+    (category.tasks || [])
+      .filter((task) => task.scheduledDate)
+      .map((task) => ({
+        id: task.id,
+        date: task.scheduledDate,
+        completed: task.completed,
+      }))
+  );
+}
+
+function parseScheduledDate(value) {
+  if (!value) {
+    return null;
+  }
+
+  if (value instanceof Date) {
+    return value;
+  }
+
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  const dateParts = value.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (dateParts) {
+    const [, year, month, day] = dateParts;
+    return new Date(Number(year), Number(month) - 1, Number(day));
+  }
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function getWeekRange(baseDate) {
+  const weekStart = startOfDay(baseDate);
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+
+  return {
+    weekStart,
+    weekEnd,
+  };
+}
+
+function isDateInRange(date, startDate, endDate) {
+  const targetTime = startOfDay(date).getTime();
+
+  return (
+    targetTime >= startOfDay(startDate).getTime() &&
+    targetTime <= startOfDay(endDate).getTime()
+  );
+}
+
+function sortTasksBySchedule(tasks, today) {
+  return [...tasks].sort((a, b) => {
+    const aDate = parseScheduledDate(a.scheduledDate) || today;
+    const bDate = parseScheduledDate(b.scheduledDate) || today;
+    const dateDiff =
+      startOfDay(aDate).getTime() - startOfDay(bDate).getTime();
+
+    if (dateDiff !== 0) {
+      return dateDiff;
+    }
+
+    return (a.orderIndex ?? 0) - (b.orderIndex ?? 0);
+  });
+}
+
+function groupTasksByCurrentPeriod(tasks, today) {
+  const { weekStart, weekEnd } = getWeekRange(today);
+  const todayTasks = [];
+  const weekTasks = [];
+
+  (tasks || []).forEach((task) => {
+    const scheduledDate = parseScheduledDate(task.scheduledDate);
+
+    if (!scheduledDate) {
+      todayTasks.push(task);
+      weekTasks.push(task);
+      return;
+    }
+
+    if (isDateInRange(scheduledDate, weekStart, weekEnd)) {
+      weekTasks.push(task);
+    }
+
+    if (isSameDay(scheduledDate, today)) {
+      todayTasks.push(task);
+    }
+  });
+
+  return {
+    todayTasks: sortTasksBySchedule(todayTasks, today),
+    weekTasks: sortTasksBySchedule(weekTasks, today),
+  };
+}
+
+function buildCurrentPeriodCategories(categories, today) {
+  return categories.map((category) => {
+    const { todayTasks, weekTasks } = groupTasksByCurrentPeriod(
+      category.tasks,
+      today
+    );
+
+    return {
+      ...category,
+      todayTasks,
+      weekTasks,
+      tasks: [...todayTasks, ...weekTasks],
+    };
+  });
+}
+
 export default function MainPage() {
   const navigate = useNavigate();
   const [isCategoryApiEnabled, setIsCategoryApiEnabled] = useState(true);
@@ -89,6 +223,14 @@ export default function MainPage() {
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(false);
   const [categories, setCategories] = useState(() =>
     readGeneratedStudyPlanCategories()
+  );
+  const scheduledTaskDates = useMemo(
+    () => collectScheduledTaskDates(categories),
+    [categories]
+  );
+  const displayedCategories = useMemo(
+    () => buildCurrentPeriodCategories(categories, today),
+    [categories, today]
   );
   const [categoryInput, setCategoryInput] = useState(null);
   const [openCategoryMenuId, setOpenCategoryMenuId] = useState(null);
@@ -346,7 +488,7 @@ export default function MainPage() {
     return Boolean(
       isCategoryApiEnabled &&
         category &&
-        !isGeneratedStudyPlanCategory(category)
+        !isGeneratedStudyPlanCategoryId(category.id)
     );
   };
 
@@ -413,6 +555,7 @@ export default function MainPage() {
                         id: crypto.randomUUID(),
                         title: value,
                         completed: false,
+                        scheduledDate: formatDateForApi(today),
                       },
                     ],
                   }
@@ -482,38 +625,39 @@ export default function MainPage() {
   const toggleCategoryTask = async (categoryId, taskId) => {
     if (isCategorySaving) return;
 
-    const category = categories.find((item) => item.id === categoryId);
-    const task = category?.tasks.find((item) => item.id === taskId);
-
-    if (shouldUseCategoryApi(categoryId) && task?.completed) {
-      return;
-    }
+    const category = findCategory(categoryId);
+    const currentTask = category?.tasks.find((task) => task.id === taskId);
+    const nextCompleted = !currentTask?.completed;
+    const useCategoryApi = shouldUseCategoryApi(categoryId);
 
     setIsCategorySaving(true);
 
     try {
-      if (shouldUseCategoryApi(categoryId)) {
+      if (useCategoryApi) {
+        setCategories((items) =>
+          updateTaskCompletion(items, categoryId, taskId, nextCompleted)
+        );
+
         await completeTask(categoryId, taskId);
-        await refreshCategories();
       } else {
         updateLocalCategories((items) =>
-          items.map((category) =>
-            category.id === categoryId
-              ? {
-                  ...category,
-                  tasks: category.tasks.map((task) =>
-                    task.id === taskId
-                      ? { ...task, completed: !task.completed }
-                      : task
-                  ),
-                }
-              : category
-          )
+          updateTaskCompletion(items, categoryId, taskId, nextCompleted)
         );
       }
     } catch (error) {
-      console.error('루트 완료 처리에 실패했어요.', error);
-      alert('루트 완료 처리에 실패했어요.');
+      if (useCategoryApi && currentTask) {
+        setCategories((items) =>
+          updateTaskCompletion(
+            items,
+            categoryId,
+            taskId,
+            currentTask.completed
+          )
+        );
+      }
+
+      console.error('루트 완료 상태 변경에 실패했어요.', error);
+      alert('루트 완료 상태 변경에 실패했어요.');
     } finally {
       setIsCategorySaving(false);
     }
@@ -592,6 +736,7 @@ export default function MainPage() {
           displayDate={calendarMonth}
           selectedDate={today}
           ddayList={dDayItems}
+          scheduledTaskList={scheduledTaskDates}
           onPreviousMonth={() => moveCalendarMonth(-1)}
           onNextMonth={() => moveCalendarMonth(1)}
           onToggleExpand={() =>
@@ -600,7 +745,7 @@ export default function MainPage() {
           size={isCalendarExpanded ? 'expanded' : 'compact'}
         />
         <CategorySection
-          categories={categories}
+          categories={displayedCategories}
           openMenuId={openCategoryMenuId}
           onAddCategory={openCategoryInput}
           onAddTask={openTaskInput}
