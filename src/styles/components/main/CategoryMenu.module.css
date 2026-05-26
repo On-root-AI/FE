@@ -1,0 +1,44 @@
+.menu {
+  position: absolute;
+  top: 36px;
+  right: 0;
+  width: 86px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  padding: 8px 0;
+  z-index: 50;
+}
+
+.menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px;
+  background: transparent;
+  border: none;
+  color: #4A4D41;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.menu button:hover {
+  background-color: #f7f8f3;
+}
+
+.divider {
+  height: 1px;
+  background-color: #E4E5DC;
+  margin: 4px 10px;
+}
+
+.editIcon,
+.deleteIcon {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -2,12 +2,18 @@ import { useEffect, useRef, useState } from 'react';
 import styles from '../../styles/components/main/DdayTitleInput.module.css';
 import { formatShortDate } from '../../utils/date.js';
 
-export default function DdayTitleInput({ selectedDate, onSubmit, onClose }) {
-  const [title, setTitle] = useState('');
+export default function DdayTitleInput({
+  selectedDate,
+  initialTitle = '',
+  onSubmit,
+  onClose,
+}) {
+  const [title, setTitle] = useState(initialTitle);
   const inputRef = useRef(null);
 
   useEffect(() => {
-    inputRef.current?.focus();
+    inputRef.current?.focus({ preventScroll: true });
+    window.requestAnimationFrame(() => window.scrollTo(0, 0));
   }, []);
 
   const handleSubmit = (event) => {

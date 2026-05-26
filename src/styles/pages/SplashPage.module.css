@@ -1,37 +1,56 @@
-.sideLeft,
-.sideRight {
-  position: absolute;
-  top: 0;
-  bottom: 0;
+.wrapper {
+  position: relative;
+  width: 100%;
   height: 100%;
-  object-fit: cover;
+  min-height: 100%;
+  background: linear-gradient(180deg, #fcfdf6 0%, #f3f9e4 100%);
+  overflow: hidden;
+}
+
+.bottomGlow {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -209px;
+  width: 296px;
+  height: 296px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(248, 230, 121, 0.7) 0%,
+    rgba(248, 230, 121, 0) 68%
+  );
+  z-index: 1;
   pointer-events: none;
-}
-
-.sideLeft {
-  left: 0;
-  width: 90px;
-}
-
-.sideRight {
-  right: 0;
-  width: 92px;
 }
 
 .content {
   position: relative;
   z-index: 2;
-  min-height: 100vh;
+  min-height: 100%;
   display: grid;
   align-content: center;
   justify-items: center;
   padding: 0 17px;
+  transform: translateY(-40px);
 }
 
 .mascots {
   position: relative;
-  width: 356px;
+  width: min(356px, calc(100vw - 34px));
   height: 164px;
+}
+
+.centerGlow {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -35px;
+  width: 210px;
+  height: 210px;
+  object-fit: contain;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .seed,
@@ -40,6 +59,7 @@
 .tree,
 .sprout {
   position: absolute;
+  z-index: 1;
 }
 
 .seed {
@@ -48,28 +68,24 @@
   width: 44px;
   height: 52px;
 }
-
 .small {
   left: 55px;
   bottom: 18px;
   width: 53px;
   height: 64px;
 }
-
 .hero {
   left: 119px;
   bottom: 0;
   width: 115px;
   height: 141px;
 }
-
 .tree {
   right: 56px;
   bottom: 21px;
   width: 50px;
   height: 59px;
 }
-
 .sprout {
   right: 0;
   bottom: 22px;
@@ -78,16 +94,16 @@
 }
 
 .logo {
-  width: 144px;
-  height: 34px;
-  margin-top: 8px;
+  width: 210px;
+  height: auto;
+  margin-top: 36px;
   object-fit: contain;
 }
 
 .content p {
-  margin: 10px 0 0;
+  margin: -25px 0 0;
   color: var(--color-text);
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   line-height: 20px;
   text-align: center;

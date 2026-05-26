@@ -1,9 +1,4 @@
-import axios from 'axios';
-
-const chatClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '',
-  timeout: 30000,
-});
+import apiClient from './client.js';
 
 function normalizeStudyPlan(rawPlan) {
   if (!Array.isArray(rawPlan)) {
@@ -67,8 +62,8 @@ function normalizeChatResponse(data) {
 
 export async function sendChatMessage(message) {
   const endpoint = import.meta.env.VITE_CHAT_API_URL || '/api/ai/generate';
-  const { data } = await chatClient.post(endpoint, { userInput: message });
 
+  const { data } = await apiClient.post(endpoint, { userInput: message });
   return normalizeChatResponse(data);
 }
 

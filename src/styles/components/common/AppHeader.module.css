@@ -43,17 +43,27 @@
 
 .logo {
   display: block;
-  width: 132px;
-  height: 38px;
+  width: 120px;
+  height: 23px;
   object-fit: cover;
   object-position: center;
+  transform: translateX(-16px);
 }
 
-.brandBlock p {
-  margin: 1px 0 0;
-  color: var(--color-text);
+.subtitleRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.subtitleRow p {
+  margin: 0;
+  color: #44473c;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
+  font-family: 'Pretendard', sans-serif;
+  line-height: 15px;
 }
 
 .chatLogo {

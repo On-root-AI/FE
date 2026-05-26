@@ -1,0 +1,24 @@
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import ChatPage from './pages/ChatPage.jsx';
+import LoginPage from './pages/LoginPage.jsx';
+import MainPage from './pages/MainPage.jsx';
+import NotFoundPage from './pages/NotFoundPage.jsx';
+import SplashPage from './pages/SplashPage.jsx';
+import GrowthPage from './pages/GrowthPage.jsx';
+import SignupPage from './pages/SignupPage.jsx';
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<SplashPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/main" element={<MainPage />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/growth" element={<GrowthPage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}

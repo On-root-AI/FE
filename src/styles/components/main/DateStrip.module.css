@@ -2,8 +2,8 @@
   position: absolute;
   z-index: 20;
   left: 30px;
+  right: 30px;
   top: 122px;
-  width: 330px;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
