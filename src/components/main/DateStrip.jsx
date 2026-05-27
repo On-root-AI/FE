@@ -1,7 +1,7 @@
 import styles from '../../styles/components/main/DateStrip.module.css';
 import { getWeekDays } from '../../utils/date.js';
 
-export default function DateStrip({ selectedDate = new Date() }) {
+export default function DateStrip({ selectedDate = new Date(), onSelectDate }) {
   const days = getWeekDays(selectedDate);
 
   return (
@@ -12,6 +12,7 @@ export default function DateStrip({ selectedDate = new Date() }) {
           className={`${styles.day} ${day.selected ? styles.selected : ''}`}
           type="button"
           aria-current={day.selected ? 'date' : undefined}
+          onClick={() => onSelectDate && onSelectDate(day.date)} 
         >
           <span>{day.week}</span>
           <strong>{day.date.getDate()}</strong>
