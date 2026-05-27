@@ -57,6 +57,10 @@ function TaskGroup({
 
 export default function CategoryCard({
   category,
+  dayTaskTitle = '오늘 할 일',
+  dayEmptyMessage = '오늘은 예정된 계획이 없어요.',
+  weekTaskTitle = '이번 주 할 일',
+  weekEmptyMessage = '이번 주 예정된 계획이 없어요.',
   isMenuOpen,
   isCollapsed,
   onToggleCollapse,
@@ -128,18 +132,18 @@ export default function CategoryCard({
       {!isCollapsed ? (
         <div className={styles.taskGroups}>
           <TaskGroup
-            title="오늘 할 일"
+            title={dayTaskTitle}
             tasks={todayTasks}
-            emptyMessage="오늘은 예정된 계획이 없어요."
+            emptyMessage={dayEmptyMessage}
             isExpanded={expandedGroups.today}
             onToggleExpand={() => toggleTaskGroup('today')}
             onToggleTask={onToggleTask}
             onDeleteTask={onDeleteTask}
           />
           <TaskGroup
-            title="이번 주 할 일"
+            title={weekTaskTitle}
             tasks={weekTasks}
-            emptyMessage="이번 주 예정된 계획이 없어요."
+            emptyMessage={weekEmptyMessage}
             isExpanded={expandedGroups.week}
             onToggleExpand={() => toggleTaskGroup('week')}
             onToggleTask={onToggleTask}

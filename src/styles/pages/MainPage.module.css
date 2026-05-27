@@ -22,7 +22,7 @@
   gap: 16px;
   margin-top: 18px;
   padding-right: 30px;
-  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(148px + env(safe-area-inset-bottom, 0px));
   padding-left: 30px;
 }
 

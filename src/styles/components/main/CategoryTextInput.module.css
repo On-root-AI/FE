@@ -21,7 +21,8 @@
   left: max(16px, calc((100vw - 390px) / 2 + 16px));
   right: max(16px, calc((100vw - 390px) / 2 + 16px));
   bottom: calc(
-    var(--keyboard-input-bottom, 24px) + env(safe-area-inset-bottom, 0px)
+    var(--category-input-bottom, var(--keyboard-input-bottom, 24px)) +
+      env(safe-area-inset-bottom, 0px)
   );
   width: auto;
   height: var(--input-height);

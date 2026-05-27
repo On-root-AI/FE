@@ -12,7 +12,7 @@ export default function DateStrip({ selectedDate = new Date(), onSelectDate }) {
           className={`${styles.day} ${day.selected ? styles.selected : ''}`}
           type="button"
           aria-current={day.selected ? 'date' : undefined}
-          onClick={() => onSelectDate && onSelectDate(day.date)} 
+          onClick={() => onSelectDate?.(day.date)}
         >
           <span>{day.week}</span>
           <strong>{day.date.getDate()}</strong>
