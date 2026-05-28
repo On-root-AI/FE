@@ -3,7 +3,7 @@
   z-index: 20;
   left: 30px;
   right: 30px;
-  top: 122px;
+  top: calc(122px + env(safe-area-inset-top, 0px));
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
