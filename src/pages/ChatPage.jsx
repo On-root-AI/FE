@@ -11,15 +11,21 @@ import chatBottomMascot from '../assets/figma/Chat_btm.png';
 import chatSideMascot from '../assets/figma/Chat_side.png';
 import { sendChatMessage } from '../apis/chat.js';
 import { getPlan, getPlans } from '../apis/plan.js';
-import { saveGeneratedStudyPlanCategory } from '../utils/generatedStudyPlans.js';
 import styles from '../styles/pages/ChatPage.module.css';
 
+function getPlanId(plan) {
+  return plan?.id ?? plan?.planId ?? plan?.data?.id ?? plan?.data?.planId;
+}
+
 function normalizePlanDetail(plan) {
+  const planData = plan?.data || plan;
+
   return {
-    id: plan.id,
-    title: plan.title || plan.category || '학습 계획',
-    targetDate: plan.targetDate,
-    tasks: (plan.tasks || []).sort(
+    id: getPlanId(planData),
+    title: planData.title || planData.category || '학습 계획',
+    category: planData.category,
+    targetDate: planData.targetDate,
+    tasks: (planData.tasks || []).sort(
       (a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0)
     ),
   };
@@ -35,6 +41,7 @@ export default function ChatPage() {
   const [isPlanListLoading, setIsPlanListLoading] = useState(false);
   const [planListError, setPlanListError] = useState('');
   const [planList, setPlanList] = useState([]);
+  const [expandedPlanIds, setExpandedPlanIds] = useState([]);
   const messageId = useRef(0);
 
   useEffect(() => {
@@ -55,15 +62,26 @@ export default function ChatPage() {
     try {
       const plans = await getPlans();
       const planDetails = await Promise.all(
-        plans.map((plan) =>
-          getPlan(plan.id).catch(() => ({
+        plans.map((plan) => {
+          const planId = getPlanId(plan);
+
+          if (planId === undefined || planId === null) {
+            return Promise.resolve({
+              ...plan,
+              tasks: [],
+            });
+          }
+
+          return getPlan(planId).catch(() => ({
             ...plan,
+            id: planId,
             tasks: [],
-          }))
-        )
+          }));
+        })
       );
 
       setPlanList(planDetails.map(normalizePlanDetail));
+      setExpandedPlanIds([]);
     } catch (error) {
       console.error('전체 계획을 불러오지 못했어요.', error);
       setPlanListError('전체 계획을 불러오지 못했어요.');
@@ -75,6 +93,14 @@ export default function ChatPage() {
   function openPlanList() {
     setIsPlanListOpen(true);
     loadPlanList();
+  }
+
+  function togglePlanExpanded(planId) {
+    setExpandedPlanIds((prev) =>
+      prev.includes(planId)
+        ? prev.filter((expandedPlanId) => expandedPlanId !== planId)
+        : [...prev, planId]
+    );
   }
 
   async function submitMessage(event) {
@@ -98,12 +124,6 @@ export default function ChatPage() {
 
     try {
       const response = await sendChatMessage(text);
-      if (response.studyPlan?.length) {
-        saveGeneratedStudyPlanCategory({
-          title: response.title,
-          days: response.studyPlan,
-        });
-      }
 
       setMessages((prev) => [
         ...prev,
@@ -246,43 +266,59 @@ export default function ChatPage() {
                 </p>
               ) : null}
               {!isPlanListLoading && !planListError && planList.length > 0
-                ? planList.map((plan) => (
-                    <article className={styles.planListCard} key={plan.id}>
-                      <div className={styles.planListCardHeader}>
-                        <h3>{plan.title}</h3>
-                        {plan.targetDate ? (
-                          <time dateTime={plan.targetDate}>
-                            {plan.targetDate}
-                          </time>
-                        ) : null}
-                      </div>
-                      {plan.tasks.length ? (
-                        <>
-                          <ul>
-                            {plan.tasks.slice(0, 5).map((task) => (
-                              <li key={task.id}>
-                                {task.scheduledDate ? (
-                                  <time dateTime={task.scheduledDate}>
-                                    {task.scheduledDate}
-                                  </time>
-                                ) : null}
-                                <span>{task.title}</span>
-                              </li>
-                            ))}
-                          </ul>
-                          {plan.tasks.length > 5 ? (
-                            <p className={styles.planListMore}>
-                              외 {plan.tasks.length - 5}개
-                            </p>
+                ? planList.map((plan) => {
+                    const isExpanded = expandedPlanIds.includes(plan.id);
+                    const visibleTasks = isExpanded
+                      ? plan.tasks
+                      : plan.tasks.slice(0, 5);
+                    const hiddenTaskCount = Math.max(plan.tasks.length - 5, 0);
+
+                    return (
+                      <article className={styles.planListCard} key={plan.id}>
+                        <div className={styles.planListCardHeader}>
+                          <h3>{plan.title}</h3>
+                          {plan.targetDate ? (
+                            <time dateTime={plan.targetDate}>
+                              {plan.targetDate}
+                            </time>
                           ) : null}
-                        </>
-                      ) : (
-                        <p className={styles.planListEmpty}>
-                          등록된 세부 계획이 없어요.
-                        </p>
-                      )}
-                    </article>
-                  ))
+                        </div>
+                        {plan.tasks.length ? (
+                          <>
+                            <ul>
+                              {visibleTasks.map((task) => (
+                                <li key={task.id}>
+                                  {task.scheduledDate ? (
+                                    <time dateTime={task.scheduledDate}>
+                                      {task.scheduledDate}
+                                    </time>
+                                  ) : null}
+                                  <span>{task.title}</span>
+                                </li>
+                              ))}
+                            </ul>
+                            <div className={styles.planListActions}>
+                              {hiddenTaskCount > 0 ? (
+                                <button
+                                  className={styles.planExpandButton}
+                                  type="button"
+                                  onClick={() => togglePlanExpanded(plan.id)}
+                                >
+                                  {isExpanded
+                                    ? '접기'
+                                    : `전체 보기 (${hiddenTaskCount}개 더보기)`}
+                                </button>
+                              ) : null}
+                            </div>
+                          </>
+                        ) : (
+                          <p className={styles.planListEmpty}>
+                            등록된 세부 계획이 없어요.
+                          </p>
+                        )}
+                      </article>
+                    );
+                  })
                 : null}
             </div>
           </section>
