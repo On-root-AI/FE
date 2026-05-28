@@ -66,6 +66,14 @@ function normalizeTask(task) {
   };
 }
 
+function getCompletedFromTaskResponse(task, fallback) {
+  if (!task || !Object.prototype.hasOwnProperty.call(task, 'completedAt')) {
+    return fallback;
+  }
+
+  return Boolean(task.completedAt);
+}
+
 function normalizeCategory(plan) {
   return {
     id: plan.id,
@@ -670,7 +678,13 @@ export default function MainPage() {
       if (useCategoryApi) {
         setCategories((items) => applyTaskCompletion(items, nextCompleted));
 
-        await completeTask(categoryId, taskId);
+        const updatedTask = await completeTask(categoryId, taskId);
+        const actualCompleted = getCompletedFromTaskResponse(
+          updatedTask,
+          nextCompleted
+        );
+
+        setCategories((items) => applyTaskCompletion(items, actualCompleted));
         await refreshCategories();
       } else {
         updateLocalCategories((items) =>

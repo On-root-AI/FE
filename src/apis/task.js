@@ -1,5 +1,9 @@
 import apiClient from './client.js';
 
+function unwrapPayload(data) {
+  return data?.data ?? data?.result ?? data;
+}
+
 export async function getTasks(planId) {
   const { data } = await apiClient.get(`/api/plans/${planId}/tasks`);
   return data;
@@ -22,7 +26,7 @@ export async function completeTask(planId, taskId) {
   const { data } = await apiClient.patch(
     `/api/plans/${planId}/tasks/${taskId}/complete`
   );
-  return data;
+  return unwrapPayload(data);
 }
 
 export async function deleteTask(planId, taskId) {
