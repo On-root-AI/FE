@@ -630,6 +630,8 @@ export default function MainPage() {
     try {
       if (shouldUseCategoryApi(categoryId)) {
         await deletePlanRequest(categoryId);
+        removeGeneratedStudyPlanCategoryMatch(category);
+        markStudyPlanCategoryDeleted(category);
         await refreshCategories();
       } else {
         removeCategoryFromView(categoryId, category);
