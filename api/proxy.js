@@ -24,12 +24,19 @@ function readRequestBody(request) {
   });
 }
 
-function createProxyHeaders(requestHeaders) {
-  return Object.fromEntries(
+function createProxyHeaders(requestHeaders, hasBody) {
+  const headers = Object.fromEntries(
     Object.entries(requestHeaders).filter(
       ([key]) => !HOP_BY_HOP_HEADERS.has(key.toLowerCase())
     )
   );
+
+  if (!hasBody) {
+    delete headers['content-type'];
+    delete headers['Content-Type'];
+  }
+
+  return headers;
 }
 
 function getBackendOrigin() {
@@ -77,11 +84,15 @@ export default async function handler(request, response) {
 
   try {
     const targetUrl = createTargetUrl(request);
-    const hasBody = request.method !== 'GET' && request.method !== 'HEAD';
+    const contentLength = Number(request.headers['content-length'] || 0);
+    const hasBody =
+      request.method !== 'GET' &&
+      request.method !== 'HEAD' &&
+      contentLength > 0;
     const body = hasBody ? await readRequestBody(request) : undefined;
     const backendResponse = await fetch(targetUrl, {
       method: request.method,
-      headers: createProxyHeaders(request.headers),
+      headers: createProxyHeaders(request.headers, hasBody),
       body,
     });
 
