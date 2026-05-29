@@ -54,6 +54,7 @@ function writeDeletedCategoryMatches(matches) {
 function createDeleteMatch(category) {
   return {
     id: category?.id,
+    signature: createSignature(category),
   };
 }
 
@@ -95,8 +96,12 @@ export function isGeneratedStudyPlanCategory(category) {
 }
 
 export function isDeletedStudyPlanCategory(category) {
+  const categorySignature = createSignature(category);
+
   return readDeletedCategoryMatches().some(
-    (match) => match.id !== undefined && match.id === category?.id
+    (match) =>
+      (match.id !== undefined && match.id === category?.id) ||
+      (match.signature && match.signature === categorySignature)
   );
 }
 
@@ -203,8 +208,11 @@ export function removeGeneratedStudyPlanCategory(categoryId) {
 }
 
 export function removeGeneratedStudyPlanCategoryMatch(category) {
+  const categorySignature = createSignature(category);
   const nextCategories = readGeneratedStudyPlanCategories().filter(
-    (generatedCategory) => generatedCategory.id !== category?.id
+    (generatedCategory) =>
+      generatedCategory.id !== category?.id &&
+      createSignature(generatedCategory) !== categorySignature
   );
 
   writeGeneratedStudyPlanCategories(nextCategories);

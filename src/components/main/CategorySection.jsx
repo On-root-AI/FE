@@ -5,6 +5,10 @@ import styles from '../../styles/components/main/CategorySection.module.css';
 
 export default function CategorySection({
   categories,
+  dayTaskTitle,
+  dayEmptyMessage,
+  weekTaskTitle,
+  weekEmptyMessage,
   openMenuId,
   onAddCategory,
   onAddTask,
@@ -60,6 +64,10 @@ export default function CategorySection({
           <CategoryCard
             key={category.id}
             category={category}
+            dayTaskTitle={dayTaskTitle}
+            dayEmptyMessage={dayEmptyMessage}
+            weekTaskTitle={weekTaskTitle}
+            weekEmptyMessage={weekEmptyMessage}
             isMenuOpen={openMenuId === category.id}
             isCollapsed={collapsedCategoryIds.has(category.id)}
             onToggleCollapse={() => toggleCollapse(category.id)}

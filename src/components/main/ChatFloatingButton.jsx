@@ -9,6 +9,7 @@ export default function ChatFloatingButton() {
     <button
       className={styles.button}
       type="button"
+      aria-label="채팅으로 이동"
       onClick={() => navigate('/chat')}
     >
       <Mascot variant="chatbot" size="lg" />

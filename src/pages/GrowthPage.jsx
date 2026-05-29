@@ -3,7 +3,12 @@ import AppHeader from '../components/common/AppHeader.jsx';
 import MobileScreenLayout from '../components/layout/MobileScreenLayout.jsx';
 import GrowthStageCard from '../components/main/GrowthStageCard.jsx';
 import { getDDays } from '../apis/dday.js';
+import { getPlan, getPlans } from '../apis/plan.js';
 import { getStreak } from '../apis/streak.js';
+import {
+  calculateCurrentStreak,
+  readStudyActivityDates,
+} from '../utils/streakActivity.js';
 import styles from '../styles/pages/ChatPage.module.css';
 import seedImg from '../assets/figma/mascot-seed.png';
 import sproutImg from '../assets/figma/mascot-sprout.png';
@@ -14,14 +19,45 @@ function calculateDdayStreak(items) {
   return items.filter((item) => item?.date).length;
 }
 
+function isCompletedTask(task) {
+  return Boolean(task?.completedAt || task?.completed);
+}
+
+function getTaskActivityDate(task) {
+  return task?.scheduledDate || task?.date || task?.completedAt;
+}
+
+async function getCompletedTaskActivityDates() {
+  const plans = await getPlans();
+  const planDetails = await Promise.all(
+    plans.map((plan) =>
+      getPlan(plan.id).catch(() => ({
+        ...plan,
+        tasks: [],
+      }))
+    )
+  );
+
+  return planDetails.flatMap((plan) =>
+    (plan.tasks || [])
+      .filter(isCompletedTask)
+      .map(getTaskActivityDate)
+      .filter(Boolean)
+  );
+}
+
 export default function GrowthPage() {
   const [streakDays, setStreakDays] = useState(0);
 
   useEffect(() => {
     let isActive = true;
 
-    Promise.allSettled([getDDays(), getStreak()])
-      .then(([ddayResult, streakResult]) => {
+    Promise.allSettled([
+      getDDays(),
+      getStreak(),
+      getCompletedTaskActivityDates(),
+    ])
+      .then(([ddayResult, streakResult, taskActivityResult]) => {
         if (!isActive) {
           return;
         }
@@ -31,17 +67,24 @@ export default function GrowthPage() {
             ? calculateDdayStreak(ddayResult.value)
             : 0;
 
-        if (ddayStreak > 0) {
-          setStreakDays(ddayStreak);
-          return;
-        }
-
         const apiStreak =
           streakResult.status === 'fulfilled'
             ? streakResult.value?.currentStreak
             : 0;
+        const taskStreak =
+          taskActivityResult.status === 'fulfilled'
+            ? calculateCurrentStreak(taskActivityResult.value)
+            : 0;
+        const localStreak = calculateCurrentStreak(readStudyActivityDates());
 
-        setStreakDays(Number.isFinite(apiStreak) ? apiStreak : 0);
+        setStreakDays(
+          Math.max(
+            ddayStreak,
+            Number.isFinite(apiStreak) ? apiStreak : 0,
+            taskStreak,
+            localStreak
+          )
+        );
       })
       .catch((error) => {
         console.error('스트릭 정보를 불러오지 못했어요.', error);

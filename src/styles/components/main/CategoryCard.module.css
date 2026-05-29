@@ -17,52 +17,55 @@
 
 .header {
   position: relative;
-  height: 29px;
+  min-height: 29px;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 18px 18px 18px;
+  column-gap: 8px;
+  align-items: start;
+  padding-bottom: 8px;
   border-bottom: 1px solid rgba(125, 128, 108, 0.35);
 }
 
 .collapsed .header {
+  min-height: 29px;
+  padding-bottom: 0;
   border-bottom: 0;
 }
 
 .categoryIcon {
-  position: absolute;
-  left: 0;
-  top: 0;
   width: 20px;
   height: 18px;
   object-fit: contain;
 }
 
 .header h3 {
-  position: absolute;
-  left: 26px;
-  top: 0;
   margin: 0;
-  max-width: 166px;
+  min-width: 0;
   overflow: hidden;
   color: var(--color-text);
   font-size: 16px;
   font-weight: 700;
   line-height: 19px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .collapseButton,
 .addButton,
 .menuButton {
-  position: absolute;
   display: block;
+  justify-self: center;
   background: transparent;
   color: var(--color-text);
 }
 
 .collapseButton {
-  right: 52px;
-  top: 5px;
   width: 14px;
   height: 14px;
+  margin-top: 5px;
 }
 
 .collapseButton span {
@@ -81,10 +84,9 @@
 }
 
 .addButton {
-  right: 30px;
-  top: 5px;
   width: 10px;
   height: 10px;
+  margin-top: 5px;
 }
 
 .addButton span {
@@ -116,10 +118,9 @@
 }
 
 .menuButton {
-  right: 7px;
-  top: 6px;
   width: 13px;
   height: 14px;
+  margin-top: 6px;
 }
 
 .menuButton span {
@@ -135,19 +136,61 @@
       center / 3px 3px no-repeat;
 }
 
+.taskGroups {
+  display: grid;
+  gap: 13px;
+  margin: 14px 0 0;
+}
+
+.taskGroup {
+  display: grid;
+  gap: 8px;
+}
+
+.taskGroupTitle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  color: #5f654e;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 14px;
+}
+
+.taskGroupTitle span {
+  min-width: 17px;
+  height: 17px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--color-main);
+  font-size: 10px;
+  line-height: 1;
+}
+
 .tasks {
   display: grid;
   gap: 10px;
-  margin: 14px 0 0;
+  margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.emptyTaskText {
+  margin: 0;
+  padding: 7px 0 2px;
+  color: #777b68;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 17px;
 }
 
 .taskMoreButton {
   justify-self: center;
   min-width: 128px;
   height: 28px;
-  margin-top: 12px;
   padding: 0 14px;
   border-radius: 999px;
   background: rgba(254, 255, 251, 0.72);

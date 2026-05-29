@@ -1,8 +1,11 @@
 .viewport {
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  height: var(--app-height, 100dvh);
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  min-height: var(--app-height, 100dvh);
   display: flex;
   justify-content: center;
   align-items: stretch;
@@ -12,9 +15,10 @@
 
 .screen {
   position: relative;
-  flex: 0 0 auto;
+  flex: 1 1 auto;
   width: 100%;
-  height: var(--app-height, 100dvh);
+  height: 100%;
+  min-height: 100%;
   overflow: hidden;
   color: var(--color-text);
 }
@@ -53,6 +57,7 @@
   .screen {
     max-width: 390px;
     height: min(var(--app-height, 100dvh), 844px);
+    min-height: 0;
     box-shadow: 0 24px 80px rgba(46, 54, 31, 0.2);
   }
 }

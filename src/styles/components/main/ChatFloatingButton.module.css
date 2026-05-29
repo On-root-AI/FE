@@ -1,10 +1,13 @@
 .button {
-  justify-self: end;
-  margin-top: 8px;
-  margin-right: 18px;
+  position: fixed;
+  right: max(18px, calc((100vw - 390px) / 2 + 18px));
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  z-index: 20;
   display: grid;
   justify-items: center;
   gap: 2px;
+  width: 84px;
+  margin: 0;
   background: transparent;
 }
 

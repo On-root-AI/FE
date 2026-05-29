@@ -8,3 +8,7 @@ export async function getExamSchedules() {
 export async function syncExamSchedules() {
   await apiClient.post('/api/exam-schedules/sync');
 }
+
+export async function syncEngineerExamSchedules() {
+  await apiClient.post('/api/exam-schedules/sync/engineers');
+}

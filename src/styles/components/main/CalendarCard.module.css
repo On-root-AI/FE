@@ -108,6 +108,29 @@
   border: none;
   cursor: pointer;
 }
+
+.scheduleDot {
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-selected);
+  box-shadow: 0 0 0 1px rgba(254, 255, 251, 0.7);
+  transform: translateX(-50%);
+}
+
+.hasDday .scheduleDot,
+.selected .scheduleDot {
+  bottom: 1px;
+  background: #dfe9ab;
+}
+
+.selected.hasDday .scheduleDot {
+  background: var(--color-white);
+}
+
 .outside {
   visibility: hidden;
 }

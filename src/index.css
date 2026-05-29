@@ -5,6 +5,7 @@
 html {
   background: #f6f7ef;
   color: var(--color-text);
+  color-scheme: light;
   font-family:
     Pretendard,
     -apple-system,
@@ -20,6 +21,7 @@ body {
   margin: 0;
   min-width: 320px;
   height: 100%;
+  background: #f6f7ef;
   overflow: hidden;
   overscroll-behavior: none;
 }
@@ -41,5 +43,6 @@ button:disabled {
 
 #root {
   height: 100%;
+  background: #f6f7ef;
   overflow: hidden;
 }
