@@ -1,6 +1,7 @@
 # FE
 
 > onRoot 프로젝트의 프론트엔드 레포지토리입니다.
+> 🔗 **서비스 링크:** https://onrootai.vercel.app/
 
 <br/>
 MVP 실행
